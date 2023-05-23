@@ -100,7 +100,7 @@
 
 
 
-        <Paginator v-if="!removePagination"
+        <Paginator :instance="tableInstance" v-if="!removePagination"
                    :initialPageSize="initialPageSize"
                    :records="records"
                    :totalRecords="totalRecords || records.length"
@@ -126,18 +126,17 @@
 </template>
 
 <script lang="ts">
-import {toRef, ref, Ref, onMounted} from "vue";
+import {toRef, ref} from "vue";
 import Empty from "../elements/Empty.vue";
 import Paginator from "./Pagination/Paginator.vue";
 import {
+    PaginationState, getPaginationRowModel,
     getCoreRowModel,
     FlexRender,
     useVueTable,
     orderColumns,
 } from "@tanstack/vue-table";
 import helpers from "../../library/helper_functions.js";
-import shuffle from 'lodash'
-import {useDraggable} from '@vueuse/core'
 import TableSettings from "./TableSettings.vue";
 import {columns} from "../../library/data";
 
@@ -188,9 +187,10 @@ export default {
       data: props.records,
       columns,
       getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
     }, orderColumns); // our tanstack table instance
 
-      window.table = tableInstance
+
 
     function paginationUpdate(paginatorInfo){
       emit("paginationQueryInfo", {info: paginatorInfo});
