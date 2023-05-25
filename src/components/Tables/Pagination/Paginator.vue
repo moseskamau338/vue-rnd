@@ -4,7 +4,6 @@ export default {
   name: "Paginator",
   props: {
     instance: { type: Object, required: true},
-    records: { type: Array, required: true},
     totalRecords: { type: Number, default: 0 },
     initialPageSize: {type: Number, default:0}
   },

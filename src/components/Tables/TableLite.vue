@@ -6,7 +6,14 @@
        <!-- headers -->
       <div class="sm:flex-auto">
         <slot name="header">
-            <button @click="randomizeColumns" class="text-xs p-1 border rounded">Randomize Columns</button>
+            <div class="mt-1 relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <SvgIcons v-if="!initDebounce" name="search" class="fill-slate-500 h-4" />
+                <SvgIcons v-else name="spinner" class="text-slate-500 animate animate-spin h-4" />
+              </div>
+              <input @keydown="handleKeydown" v-model="global_search_filter" type="text" name="search" id="search" class="shadow-sm focus:ring-green-600 focus:border-green-600 block w-96 sm:text-sm border-gray-300 rounded-md pl-10" placeholder="Search records...">
+            </div>
+
         </slot>
       </div>
       <div class="mt-4 sm:mt-0 md:ml-4 sm:ml-16 sm:flex-none">
@@ -26,119 +33,81 @@
 
 
     <div class="mt-4 flex flex-col mx-4">
-      <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle">
-           <div id="scrollable" :class="container_classes">
-              <!-- table -->
-              <table class="min-w-full table-fixed divide-y divide-gray-300 border-2 border-separate border-spacing-0 border-transparent">
-                <!-- table header -->
-                <thead class="sticky top-0" :class="head_classes">
-                  <template :key="header_group.id" v-for="header_group in tableInstance.getHeaderGroups()">
-                      <tr class="py-0">
-                          <template :key="header.accessorKey" v-for="(header, index) in header_group.headers">
-                              <th :colspan="header.colSpan" scope="col" class="group text-left" :class="header_cell_classes">
 
-                                  <div class="flex items-center relative group">
-
-                                      <div :class="[
-                                          index === 0 ? 'group-hover:ml-6' : '',
-                                          'transition-all duration-500'
-                                      ]">
-                                          <slot :name="'header_'+header.accessorKey" v-bind:header="header">
-                                              <FlexRender
-                                                :render="header.column.columnDef.header"
-                                                :props="header.getContext()"
-                                              />
-                                          </slot>
-                                      </div>
-                                  </div>
-                              </th>
-                          </template>
-
-                      </tr>
-                  </template>
-                </thead>
-               <!-- table body -->
-               <tbody class="divide-y divide-gray-200 dark:divide-slate-600 bg-white dark:bg-churpy-dark/60 h-9 overflow-auto">
-
-                    <!-- table row(s) -->
-                    <template v-if="!loading && data.length > 0" v-for="row in tableInstance.getRowModel().rows" :key="row.id">
-
-                      <tr class="transition-all" :class="[row_classes]">
-                          <!-- row data -->
-                            <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="whitespace-nowrap" :class="cell_classes">
-                              <slot :name="cell.id" v-bind:record="row">
-                                  <FlexRender
-                                    :render="cell.column.columnDef.cell"
-                                    :props="cell.getContext()"
-                                  />
-                              </slot>
-                            </td>
-                        </tr>
-
-                        <slot name="inner_table" v-bind:record="record"></slot>
-                    </template>
-
-                      <tr v-else-if="loading">
-                        <td colspan="100%">
-                          <div class="text-center mt-8">
-                             <i class="fa-duotone fa-spinner-third animate-spin mr-2"></i>
-                             <span class="font-bold mt-4">Processing...</span>
-                           </div>
-                        </td>
-                      </tr>
-                      <tr v-else>
-                        <td colspan="100%">
-                             <Empty />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+        <div class="relative flex flex-row -space-x-1" id="scrollable" :class="container_classes">
+            <template v-for="side in ['Left', 'Center', 'Right']">
+                <div :class="[
+                    side === 'Left' ? 'sticky left-0 z-10' : 'z-[0]'
+                ]">
+                   <TableMarkup
+                       :table-instance="tableInstance"
+                       :records="records"
+                       :loading="loading"
+                       :side="side"
+                   />
                 </div>
-            </div>
-          </div>
-
-
+            </template>
+        </div>
 
         <Paginator :instance="tableInstance" v-if="!removePagination"
                    :initialPageSize="initialPageSize"
-                   :records="records"
                    :totalRecords="totalRecords || records.length"
                    @paginate-records="paginationUpdate" />
 
         </div>
   </div>
 
-<TableSettings
-        @reOrderColumns="reOrderColumns"
-        @close="open_settings = false"
-        :columns="tableInstance.getAllLeafColumns()"
-        :open="open_settings" />
+    <TableSettings
+      @reOrderColumns="reOrderColumns"
+      @close="open_settings = false"
+      @pinColumn="togglePinColumn"
+      :columns="tableInstance.getAllLeafColumns()"
+      :open="open_settings" />
 
 <!--  For testing only -->
  <div class="h-[600px] w-full border px-20">
     <span class="text-slate-500 text-sm">Test stuff here</span>
     <div class="mt-5">
-        Table props
+        {{ JSON.stringify(tableInstance.getState(), null, 2)}}
     </div>
 </div>
 
 </template>
 
 <script lang="ts">
-import {toRef, ref} from "vue";
+import {toRef, ref, computed, h} from "vue";
 import Empty from "../elements/Empty.vue";
 import Paginator from "./Pagination/Paginator.vue";
 import {
-    PaginationState, getPaginationRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
     getCoreRowModel,
-    FlexRender,
-    useVueTable,
-    orderColumns,
+    FlexRender, getFacetedMinMaxValues,
+    useVueTable, getFacetedUniqueValues,
+    getFilteredRowModel, FilterFn, SortingFn, sortingFns,
 } from "@tanstack/vue-table";
 import helpers from "../../library/helper_functions.js";
 import TableSettings from "./TableSettings.vue";
 import {columns} from "../../library/data";
+import SvgIcons from "../elements/SvgIcons.vue";
+import {
+  RankingInfo,
+  rankItem,
+  compareItems,
+} from '@tanstack/match-sorter-utils'
+import ColumnFilter from "./ColumnFilter.vue";
+import TableMarkup from "./TableMarkup.vue";
+
+
+
+declare module '@tanstack/table-core' {
+  interface FilterFns {
+    fuzzy: FilterFn<unknown>
+  }
+  interface FilterMeta {
+    itemRank: RankingInfo
+  }
+}
 
 export default {
   name: "TableLite",
@@ -147,7 +116,7 @@ export default {
             return columns
         }
     },
-  components: {TableSettings, Paginator, Empty, FlexRender},
+  components: {TableMarkup, ColumnFilter, SvgIcons, TableSettings, Paginator, Empty, FlexRender},
   props:{
     loading:{default:false},
     settings: Boolean,
@@ -169,26 +138,121 @@ export default {
      cell_classes: {type:String, default: 'px-3 py-1 text-xs text-gray-500 dark:text-gray-300'},
   },
   setup(props, { emit }){
-      const {makeTitle} = helpers
+      const {makeTitle, delayFunction} = helpers
 
     let data = toRef(props,"records");
     let startIndex = ref(0);
     let endIndex = ref(3000);
     let open_settings = ref(false);
+    let tableInstance = ref(null)
 
-    let columns = props.headers.map((header) => {
+    //filters
+    let global_search_filter = ref('');
+
+    let columns = ref(props.headers.map((header) => {
         return {
           header: header.label || makeTitle(header.key, '_'),
           accessorKey: header.key,
         }
-      })
+      }))
 
-    const tableInstance = useVueTable({
+      // @ts-ignore
+      columns.value = [
+          {
+            id: 'select',
+            enableColumnFilter: false,
+            enableSorting: false,
+            header: ({ table }) => {
+              return h('div', { class: 'px-1 h-6 w-6 flex items-center justify-center text-center w-full' }, [
+                   h('input', {
+                      type:'checkbox',
+                      checked: table.getIsAllRowsSelected(),
+                      indeterminate: table.getIsSomeRowsSelected(),
+                      onChange: table.getToggleAllRowsSelectedHandler(),
+                      class: 'w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                    })
+              ]);
+            },
+            cell: ({ row }) => {
+              return h('div', { class: 'px-1 h-5 w-5' }, [
+                h('input', {
+                  type:'checkbox',
+                  checked: row.getIsSelected(),
+                  disabled: !row.getCanSelect(),
+                  indeterminate: row.getIsSomeSelected(),
+                  onChange: row.getToggleSelectedHandler(),
+                  class: 'w-4 h-4 text-green-600 bg-gray-50 border-gray-300 rounded-sm focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                })
+              ]);
+            }
+          },
+          ...columns.value
+      ]
+
+      const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+          console.log('Called, fuzzyFilter', value)
+          // Rank the item
+          const itemRank = rankItem(row.getValue(columnId), value)
+
+          // Store the itemRank info
+          addMeta({
+            itemRank,
+          })
+
+          // Return if the item should be filtered in/out
+          return itemRank.passed
+        }
+      const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
+          let dir = 0
+
+          // Only sort by rank if the column has ranking information
+          if (rowA.columnFiltersMeta[columnId]) {
+            dir = compareItems(
+              rowA.columnFiltersMeta[columnId]?.itemRank!,
+              rowB.columnFiltersMeta[columnId]?.itemRank!
+            )
+          }
+
+          // Provide an alphanumeric fallback for when the item ranks are equal
+          return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir
+      }
+
+      // @ts-ignore
+      tableInstance.value = useVueTable({
       data: props.records,
-      columns,
+      columns: columns.value,
       getCoreRowModel: getCoreRowModel(),
+        //paginate
       getPaginationRowModel: getPaginationRowModel(),
-    }, orderColumns); // our tanstack table instance
+        //sort
+      getSortedRowModel: getSortedRowModel(),
+      //filters
+      filterFns: {
+        fuzzy: fuzzyFilter,
+      },
+
+      getFilteredRowModel: getFilteredRowModel(),
+      getFacetedUniqueValues: getFacetedUniqueValues(),
+      getFacetedMinMaxValues: getFacetedMinMaxValues(),
+
+      // row selection
+      // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+      enableRowSelection: true, //enable row selection for all rows
+      enableMultiRowSelection: true,
+
+      debugTable: true,
+      debugHeaders: true,
+      debugColumns: false,
+    }); // our tanstack table instance
+
+      window.table = tableInstance.value
+
+      // @ts-ignore
+    let {initDebounce, handleKeydown} = delayFunction({
+        delay: 2000,
+        onStart: null,
+        onEnd: () => tableInstance.value.setGlobalFilter(global_search_filter.value)
+    })
 
 
 
@@ -205,19 +269,33 @@ export default {
        */
     }
 
-    function toggleSettingView(){open_settings.value = !open_settings.value}
-
   const reOrderColumns = (columns) => {
-      tableInstance.setColumnOrder(
+      tableInstance.value.setColumnOrder(
         columns.map(d => d.id)
       )
     }
 
+  const togglePinColumn = (payload) => {
+      let column = tableInstance.value.getColumn(payload.column.id)
+      if (column.getIsPinned() === payload.side){
+          column.pin(false)
+      }else{
+        column.pin(payload.side)
+      }
+  }
+
+const getSortedDirection = (header) => {
+    return {asc:{icon:'chevron-up', classes:'fill-slate-600 h-1.5'},
+          desc:{icon:'chevron-down', classes:'fill-slate-600 h-1.5'}
+      }[header.column.getIsSorted()] ?? {icon:'chevron-both', classes:'fill-slate-400 h-3'}
+}
+
     return {
         tableInstance,reOrderColumns,
 
-        makeTitle, open_settings, toggleSettingView,
-        data, paginationUpdate,
+        initDebounce, handleKeydown, togglePinColumn,
+        makeTitle, open_settings, getSortedDirection,
+        data, paginationUpdate, global_search_filter,
         startIndex, endIndex,
     }
 

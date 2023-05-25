@@ -10,7 +10,7 @@
     > ~~Initial design/theme~~
     > All table functions optional - resize, move, pin, filter, sort, multi-sorts, 
     > Easily stylable UI
-    > API/Data based operation for all features
+    > API/Data based operations for all features
     > Performance tuned table (test with thousands of rows)
     > Can add custom sections for charts/data etc
 

@@ -1,8 +1,8 @@
 <template>
 <TransitionRoot as="template" :show="open">
-    <div class="z-[12] fixed inset-0 overflow-hidden" @close="$emit('close')">
+    <div class="z-[12] fixed inset-0 overflow-hidden">
       <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        <div @click="$emit('close')" class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 
         <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
           <TransitionChild as="template" enter="transform transition ease-in-out duration-150" enter-from="translate-x-full" enter-to="translate-x-0" leave="transform transition ease-in-out duration-300" leave-from="translate-x-0" leave-to="translate-x-full">
@@ -31,20 +31,42 @@
                       <fieldset class="space-y-5 ml-4 mt-1 max-h-[300px] overflow-y-auto">
                         <legend class="sr-only">columns</legend>
                           <draggable :list="columns" tag="ul" @end="onDragEnd">
-                              <template #item="{ element: column }">
+                              <template :key="column" #item="{ element: column }">
                                  <li  class="relative flex items-start group py-1 bg-white">
-                                      <span
-                                            class="opacity-40 hover:cursor-move px-1 py-0.5 hover:bg-slate-300/50 rounded flex-col -space-y-1 leading-none text-[10px] transition-all duration-500 absolute right-4 hidden group-hover:flex">
-                                            <span>&bull;&bull;&bull;</span>
-                                            <span>&bull;&bull;&bull;</span>
-                                        </span>
+                                     <div class="absolute right-4 flex space-x-2 items-center">
+                                        <span
+                                              class="opacity-40 hover:cursor-move px-1 py-0.5 hover:bg-slate-300/50 rounded flex-col -space-y-1 leading-none text-[10px] transition-all duration-500 hidden group-hover:flex">
+                                              <span>&bull;&bull;&bull;</span>
+                                              <span>&bull;&bull;&bull;</span>
+                                          </span>
+
+                                         <div class="flex space-x-1" title="Pin column">
+                                             <button @click="toggleColumnPinning(column, 'left')">
+                                               <SvgIcons
+                                                       :class="[
+                                                           column.getIsPinned() === 'left' ? 'flex fill-slate-600' : 'hidden group-hover:flex fill-slate-300'
+                                                       ]"
+                                                       class="h-3 transition-all duration-500 hover:fill-slate-600"  name="pin-column-left" />
+                                             </button>
+                                             <button @click="toggleColumnPinning(column, 'right')">
+                                               <SvgIcons
+                                                       :class="[
+                                                           column.getIsPinned() === 'right' ? 'flex fill-slate-600' : 'hidden group-hover:flex fill-slate-300'
+                                                       ]"
+                                                       class="h-3 transition-all duration-500 hover:fill-slate-600" name="pin-column-right" />
+                                             </button>
+                                         </div>
+
+                                     </div>
                                       <div :class="{
                                         'pointer-events-none opacity-40' : column['always_show']
                                       }" class="flex items-center h-5">
                                         <input :value="column.getIsVisible()" :checked="column.getIsVisible()" @change="toggleColumnVisibility($event, column)" type="checkbox" class="dark:bg-slate-800 dark:border-gray-500 focus:ring-0 h-4 w-4 checked:text-green-600 rounded-sm" />
                                       </div>
                                       <div class="ml-3 text-sm">
-                                        <label class="text-slate-500 dark:text-slate-600">{{ column.columnDef.header }} {{column['always_show']}}</label>
+                                        <label class="text-slate-500 dark:text-slate-600">
+                                            {{ column.id === 'select' ? 'Selection' : column.columnDef.header }}
+                                        </label>
                                       </div>
                                  </li>
                               </template>
@@ -82,6 +104,7 @@ import helpers from "../../library/helper_functions.js";
 import {ref, toRef, toRefs} from "vue";
 import {useDraggable} from "@vueuse/core";
 import draggable from 'vuedraggable';
+import SvgIcons from "../elements/SvgIcons.vue";
 
 
 const col_row_el = ref<HTMLElement | null>(null)
@@ -97,7 +120,7 @@ const props = defineProps({
     open: {default: false},
     columns: {required: true, type: Array}
   })
-const emits = defineEmits(['reOrderColumns'])
+const emits = defineEmits(['reOrderColumns', 'pinColumn'])
 
 const toggleColumnVisibility = (e, column) => {
     //console.log('Toggling: ', e.target.checked, column)
@@ -109,6 +132,9 @@ const {makeTitle} = helpers
 
 const onDragEnd = (e) => {
     emits('reOrderColumns', props.columns)
+}
+const toggleColumnPinning = (column, side) => {
+    emits('pinColumn', {column, side})
 }
 
 </script>

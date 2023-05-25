@@ -18,8 +18,8 @@ import Gridjs from "./components/Tables/Gridjs.vue";
         </div>
 
         <div class="mt-20">
-            <RevoGrid />
-            <Gridjs />
+<!--            <RevoGrid />-->
+<!--            <Gridjs />-->
         </div>
 
     </div>
