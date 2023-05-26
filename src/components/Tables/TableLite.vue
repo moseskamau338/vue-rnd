@@ -36,17 +36,14 @@
 
         <div class="relative flex flex-row -space-x-1" id="scrollable" :class="container_classes">
             <template v-for="side in ['Center']">
-                <div style="min-height: 400px;" :class="[
+                <div :class="[
                     side === 'Left' ? 'sticky left-0 z-10' : 'z-[0]'
                 ]">
                    <TableMarkup
                        :table-instance="tableInstance"
-                       :records="records"
-                       :loading="loading"
-                       :cell_classes="cell_classes"
-                       :head_classes="head_classes"
-                       :header_cell_classes="header_cell_classes"
-                       :row_classes="row_classes"
+                       :records="records" :loading="loading"
+                       :cell_classes="cell_classes" :head_classes="head_classes"
+                       :header_cell_classes="header_cell_classes" :row_classes="row_classes"
                        :side="side"
                    />
                 </div>
@@ -175,38 +172,41 @@ export default {
         }
       }))
 
-      // @ts-ignore
-      columns.value = [
-          {
-            id: 'select',
-            enableColumnFilter: false,
-            enableSorting: false,
-            header: ({ table }) => {
-              return h('div', { class: 'px-1 h-6 w-6 flex items-center justify-center text-center w-full' }, [
-                   h('input', {
+      if (props.selectable){
+          // @ts-ignore
+          //Add selection options
+          columns.value = [
+              {
+                id: 'select',
+                enableColumnFilter: false,
+                enableSorting: false,
+                header: ({ table }) => {
+                  return h('div', { class: 'px-1 h-6 w-6 flex items-center justify-center text-center w-full' }, [
+                       h('input', {
+                          type:'checkbox',
+                          checked: table.getIsAllRowsSelected(),
+                          indeterminate: table.getIsSomeRowsSelected(),
+                          onChange: table.getToggleAllRowsSelectedHandler(),
+                          class: 'w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                        })
+                  ]);
+                },
+                cell: ({ row }) => {
+                  return h('div', { class: 'px-1 h-5 w-5' }, [
+                    h('input', {
                       type:'checkbox',
-                      checked: table.getIsAllRowsSelected(),
-                      indeterminate: table.getIsSomeRowsSelected(),
-                      onChange: table.getToggleAllRowsSelectedHandler(),
-                      class: 'w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                      checked: row.getIsSelected(),
+                      disabled: !row.getCanSelect(),
+                      indeterminate: row.getIsSomeSelected(),
+                      onChange: row.getToggleSelectedHandler(),
+                      class: 'w-4 h-4 text-green-600 bg-gray-50 border-gray-300 rounded-sm focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
                     })
-              ]);
-            },
-            cell: ({ row }) => {
-              return h('div', { class: 'px-1 h-5 w-5' }, [
-                h('input', {
-                  type:'checkbox',
-                  checked: row.getIsSelected(),
-                  disabled: !row.getCanSelect(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
-                  class: 'w-4 h-4 text-green-600 bg-gray-50 border-gray-300 rounded-sm focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                })
-              ]);
-            }
-          },
-          ...columns.value
-      ]
+                  ]);
+                }
+              },
+              ...columns.value
+          ]
+      }
 
       const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
           console.log('Called, fuzzyFilter', value)
