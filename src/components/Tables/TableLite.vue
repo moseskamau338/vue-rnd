@@ -35,19 +35,25 @@
     <div class="mt-4 flex flex-col mx-4">
 
         <div class="relative flex flex-row -space-x-1" id="scrollable" :class="container_classes">
-            <template v-for="side in ['Left', 'Center', 'Right']">
-                <div :class="[
+            <template v-for="side in ['Center']">
+                <div style="min-height: 400px;" :class="[
                     side === 'Left' ? 'sticky left-0 z-10' : 'z-[0]'
                 ]">
                    <TableMarkup
                        :table-instance="tableInstance"
                        :records="records"
                        :loading="loading"
+                       :cell_classes="cell_classes"
+                       :head_classes="head_classes"
+                       :header_cell_classes="header_cell_classes"
+                       :row_classes="row_classes"
                        :side="side"
                    />
                 </div>
             </template>
         </div>
+
+
 
         <Paginator :instance="tableInstance" v-if="!removePagination"
                    :initialPageSize="initialPageSize"
@@ -61,6 +67,7 @@
       @reOrderColumns="reOrderColumns"
       @close="open_settings = false"
       @pinColumn="togglePinColumn"
+      :columnResizeMode="columnResizeMode"
       :columns="tableInstance.getAllLeafColumns()"
       :open="open_settings" />
 
@@ -68,8 +75,16 @@
  <div class="h-[600px] w-full border px-20">
     <span class="text-slate-500 text-sm">Test stuff here</span>
     <div class="mt-5">
-        {{ JSON.stringify(tableInstance.getState(), null, 2)}}
+        {{ JSON.stringify(
+          {
+            columnSizing: tableInstance.getState().columnSizing,
+            columnSizingInfo: tableInstance.getState().columnSizingInfo,
+          },
+          null,
+          2
+        )}}
     </div>
+
 </div>
 
 </template>
@@ -145,6 +160,7 @@ export default {
     let endIndex = ref(3000);
     let open_settings = ref(false);
     let tableInstance = ref(null)
+    let columnResizeMode = ref('onChange')
 
     //filters
     let global_search_filter = ref('');
@@ -153,6 +169,9 @@ export default {
         return {
           header: header.label || makeTitle(header.key, '_'),
           accessorKey: header.key,
+          //resize props
+          enableResizing: true,
+          minSize: 80
         }
       }))
 
@@ -249,7 +268,7 @@ export default {
 
       // @ts-ignore
     let {initDebounce, handleKeydown} = delayFunction({
-        delay: 2000,
+        delay: 0,
         onStart: null,
         onEnd: () => tableInstance.value.setGlobalFilter(global_search_filter.value)
     })
@@ -291,7 +310,7 @@ const getSortedDirection = (header) => {
 }
 
     return {
-        tableInstance,reOrderColumns,
+        tableInstance,reOrderColumns, columnResizeMode,
 
         initDebounce, handleKeydown, togglePinColumn,
         makeTitle, open_settings, getSortedDirection,

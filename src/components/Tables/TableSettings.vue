@@ -40,22 +40,22 @@
                                               <span>&bull;&bull;&bull;</span>
                                           </span>
 
-                                         <div class="flex space-x-1" title="Pin column">
-                                             <button @click="toggleColumnPinning(column, 'left')">
-                                               <SvgIcons
-                                                       :class="[
-                                                           column.getIsPinned() === 'left' ? 'flex fill-slate-600' : 'hidden group-hover:flex fill-slate-300'
-                                                       ]"
-                                                       class="h-3 transition-all duration-500 hover:fill-slate-600"  name="pin-column-left" />
-                                             </button>
-                                             <button @click="toggleColumnPinning(column, 'right')">
-                                               <SvgIcons
-                                                       :class="[
-                                                           column.getIsPinned() === 'right' ? 'flex fill-slate-600' : 'hidden group-hover:flex fill-slate-300'
-                                                       ]"
-                                                       class="h-3 transition-all duration-500 hover:fill-slate-600" name="pin-column-right" />
-                                             </button>
-                                         </div>
+                                      <!--   <div class="flex space-x-1" title="Pin column">-->
+                                      <!--       <button @click="toggleColumnPinning(column, 'left')">-->
+                                      <!--         <SvgIcons-->
+                                      <!--                 :class="[-->
+                                      <!--                     column.getIsPinned() === 'left' ? 'flex fill-slate-600' : 'hidden group-hover:flex fill-slate-300'-->
+                                      <!--                 ]"-->
+                                      <!--                 class="h-3 transition-all duration-500 hover:fill-slate-600"  name="pin-column-left" />-->
+                                      <!--       </button>-->
+                                      <!--       <button @click="toggleColumnPinning(column, 'right')">-->
+                                      <!--         <SvgIcons-->
+                                      <!--                 :class="[-->
+                                      <!--                     column.getIsPinned() === 'right' ? 'flex fill-slate-600' : 'hidden group-hover:flex fill-slate-300'-->
+                                      <!--                 ]"-->
+                                      <!--                 class="h-3 transition-all duration-500 hover:fill-slate-600" name="pin-column-right" />-->
+                                      <!--       </button>-->
+                                      <!--   </div>-->
 
                                      </div>
                                       <div :class="{

@@ -1,4 +1,5 @@
 <script setup>
+
 import {FlexRender} from "@tanstack/vue-table";
 import SvgIcons from "../elements/SvgIcons.vue";
 import ColumnFilter from "./ColumnFilter.vue";
@@ -7,17 +8,17 @@ import Empty from "../elements/Empty.vue";
 
 const props = defineProps({
     loading:{default:false},
+    columnResizeMode:{default:'onChange'},
     side: {default: 'Center', type: String},
     records:{
       type:Array,
       default:[]
     },
     tableInstance: {required: true, type:Object},
-    container_classes: {type:String, default: 'ring-1 ring-black ring-opacity-5 md:rounded max-h-[65vh] overflow-y-auto border dark:border-slate-500 rounded'},
-     head_classes: {type:String, default: 'bg-gray-200 z-10 dark:bg-churpy-dark whitespace-nowrap'},
-     header_cell_classes: {type:String, default: 'px-2 min-w-2 py-3 text-xs font-semibold text-churpy-dark dark:text-gray-400'},
-     row_classes: {type:String, default: 'dark:hover:bg-gray-300/20 hover:bg-gray-100/60 dark:odd:bg-gray-600 odd:bg-gray-100'},
-     cell_classes: {type:String, default: 'px-3 py-1 text-xs text-gray-500 dark:text-gray-300'},
+     head_classes: {type:String, default: ''},
+     header_cell_classes: {type:String, default: ''},
+     row_classes: {type:String, default: ''},
+     cell_classes: {type:String, default: ''},
 })
 
 const getSortedDirection = (header) => {
@@ -31,7 +32,7 @@ let data = toRef(props,"records");
 </script>
 
 <template>
-<table class="table-fixed divide-y divide-gray-300 border-2 border-separate border-spacing-0 border-transparent">
+<table class="divide-y divide-gray-300 border-2 border-separate border-spacing-0 border-transparent">
     <!-- table header -->
     <thead class="sticky top-0" :class="head_classes">
       <template :key="header_group.id" v-for="header_group in tableInstance[`get${side}HeaderGroups`]()">
@@ -53,6 +54,18 @@ let data = toRef(props,"records");
                                class="p-1 rounded-sm hover:bg-gray-300 transition-all cursor-pointer">
                               <SvgIcons :class="getSortedDirection(header).classes" :name="getSortedDirection(header).icon" />
                           </div>
+                        <!-- Resizer -->
+                        <!--  <div @mousedown="header.getResizeHandler($event)" :class="`resizer ${-->
+                        <!--        header.column.getIsResizing() ? 'isResizing' : ''-->
+                        <!--      }`"-->
+                        <!--       :style = "{-->
+                        <!--        transform:-->
+                        <!--          columnResizeMode === 'onEnd' &&-->
+                        <!--          header.column.getIsResizing()-->
+                        <!--            ? `translateX(${ tableInstance.getState().columnSizingInfo.deltaOffset }px)`-->
+                        <!--            : '',-->
+                        <!--      }"-->
+                        <!--  ></div>-->
                       </div>
                   </th>
               </template>
