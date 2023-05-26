@@ -1,14 +1,13 @@
 <template>
-<span>Data view</span>
+  <TableLite
+      :headers="columns"
+      :records="data"
+      :total-records="data.length" />
 </template>
 
 <script setup>
-import axios from "axios";
-import { useVueTable, FlexRender } from '@tanstack/vue-table'
-
-const table = useVueTable({})
-window['table'] = table
-
+import TableLite from "../Tables/TableLite.vue";
+import { data, columns } from "../../library/data";
 </script>
 
 <style scoped>

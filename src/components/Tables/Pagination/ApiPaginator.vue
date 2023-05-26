@@ -34,9 +34,9 @@ export default {
 
     const pageSizeOptions = computed(() => {
       let pageSizeOptionsArr = [];
-      let tensArr = [50, 100];
-      let hundredsArr = [300, 500];
-      let thousandsArr = [1000, 2000, 3000, 5000];
+      let tensArr = [ 5, 10, 20, 50, 100 ];
+      let hundredsArr = [ 300, 500 ];
+      let thousandsArr = [ 1000, 2000, 3000, 5000 ];
       const total = props.totalRecords;
 
       if(total > 1000){

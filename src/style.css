@@ -15,4 +15,26 @@
         @apply bg-sky-500 opacity-100
     }
 
+
+    :root {
+      --bg-color: #fff;
+      --line-color-1: rgba(68, 161, 161, 0.23);
+      --line-color-2: rgba(204, 204, 204, 0.23);
+    }
+
+    .graph-paper {
+      height: 100%;
+      background-image: conic-gradient(
+          at calc(100% - 2px) calc(100% - 2px),
+          var(--line-color-1) 270deg,
+          #0000 0
+        ),
+        conic-gradient(
+          at calc(100% - 1px) calc(100% - 1px),
+          var(--line-color-2) 270deg,
+          #0000 0
+        );
+      background-size: 50px 50px, 10px 10px;
+    }
+
 }

@@ -35,7 +35,7 @@ let data = toRef(props,"records");
 </script>
 
 <template>
-<table class="divide-y divide-gray-300 border-2 border-separate border-spacing-0 border-transparent">
+<table class="min-w-full divide-y divide-gray-300 border-2 border-separate border-spacing-0 border-transparent">
     <!-- table header -->
     <thead class="sticky top-0" :class="head_classes">
       <template :key="header_group.id" v-for="header_group in tableInstance[`get${side}HeaderGroups`]()">

@@ -46,10 +46,10 @@ const { x, y, style } = useDraggable(el, {
 </script>
 
 <template>
-  <div class="graph-paper">
+  <div class="graph-paper h-full w-full border">
       <div ref="el" :style="style" style="position: fixed" id="panel" class="relative group">
           <div class='resizable'>
-            <div :style="{ width: `${width}px`, height: `${height}px` }" class="bg-white shadow-lg rounded rounded-md min-w-[300px] min-h-[200px]">
+            <div :style="{ width: `${width}px`, height: `${height}px` }" class="bg-white shadow-lg rounded-md min-w-[300px] min-h-[200px]">
 
               <!--Resizers-->
               <div class='absolute bottom-0 right-0 pointer-events-auto hover:cursor-nwse-resize'>
@@ -98,24 +98,5 @@ const { x, y, style } = useDraggable(el, {
 </template>
 
 <style>
-:root {
-  --bg-color: #fff;
-  --line-color-1: rgba(68, 161, 161, 0.23);
-  --line-color-2: rgba(204, 204, 204, 0.23);
-}
 
-.graph-paper {
-  height: 100%;
-  background-image: conic-gradient(
-      at calc(100% - 2px) calc(100% - 2px),
-      var(--line-color-1) 270deg,
-      #0000 0
-    ),
-    conic-gradient(
-      at calc(100% - 1px) calc(100% - 1px),
-      var(--line-color-2) 270deg,
-      #0000 0
-    );
-  background-size: 50px 50px, 10px 10px;
-}
 </style>

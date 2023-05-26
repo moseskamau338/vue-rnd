@@ -33,7 +33,7 @@
 
     <div class="mt-4 flex flex-col mx-4">
 
-        <div class="relative flex flex-row -space-x-1" id="scrollable" :class="container_classes">
+        <div class="relative flex flex-col -space-x-1" id="scrollable" :class="container_classes">
             <template v-for="side in ['Center']">
                 <div :class="[
                     side === 'Left' ? 'sticky left-0 z-10' : 'z-[0]'
@@ -73,21 +73,7 @@
       :columns="tableInstance.getAllLeafColumns()"
       :open="open_settings" />
 
-<!--  For testing only -->
- <div class="h-[600px] w-full border px-20">
-    <span class="text-slate-500 text-sm">Test stuff here</span>
-    <div class="mt-5">
-        {{ JSON.stringify(
-          {
-            columnSizing: tableInstance.getState().columnSizing,
-            columnSizingInfo: tableInstance.getState().columnSizingInfo,
-          },
-          null,
-          2
-        )}}
-    </div>
 
-</div>
 
 </template>
 
@@ -152,7 +138,7 @@ export default {
     activateGlobalFilter: Boolean,
     activateSort: Boolean,
     initialPageSize: {type:Number},
-     container_classes: {type:String, default: 'ring-1 ring-black ring-opacity-5 md:rounded max-h-[65vh] overflow-y-auto border dark:border-slate-500 rounded'},
+     container_classes: {type:String, default: 'shadow max-h-[65vh] overflow-y-auto'},
      head_classes: {type:String, default: 'bg-gray-200 z-10 dark:bg-churpy-dark whitespace-nowrap'},
      header_cell_classes: {type:String, default: 'px-2 min-w-2 py-3 text-xs font-semibold text-churpy-dark dark:text-gray-400'},
      row_classes: {type:String, default: 'dark:hover:bg-gray-300/20 hover:bg-gray-100/60 dark:odd:bg-gray-600 odd:bg-gray-100'},

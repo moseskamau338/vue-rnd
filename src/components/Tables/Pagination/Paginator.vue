@@ -8,7 +8,7 @@ export default {
     initialPageSize: {type: Number, default:0}
   },
   setup(props, { emit }) {
-    const pageSize = ref(props.instance.getState().pagination.pageSize);
+    const pageSize = ref(10);
 
     if (props.initialPageSize > 0){
         props.instance.setPageSize(Number(props.initialPageSize))
@@ -83,7 +83,7 @@ export default {
   <div class="flex gap-3 justify-between m-3 items-center flex-wrap">
     <p class="text-xs">Page <b>{{ instance.getState().pagination.pageIndex + 1 }} of {{ instance.getPageCount() }}</b> <span><small>({{ totalRecords }} total records)</small></span></p>
     <div class="flex justify-between items-center gap-2 flex-wrap">
-      <select v-model="pageSize" @input="handlePageSizeChange" class="rounded leading-none border-gray-300 text-xs focus:outline-none focus:ring-green-500 focus:border-green-500 mr-3 py-1.5 dark:bg-churpy-night dark:border-gray-500">
+      <select v-model="pageSize" @change="handlePageSizeChange" class="rounded leading-none border-gray-300 text-xs focus:outline-none focus:ring-green-500 focus:border-green-500 mr-3 py-1.5 dark:bg-churpy-night dark:border-gray-500">
         <option value="">---Page Size---</option>
         <option v-for="(item, idx) in pageSizeOptions" :key="idx" :value="item">{{ item}}</option>
       </select>
