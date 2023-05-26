@@ -10,6 +10,9 @@ const props = defineProps({
     loading:{default:false},
     columnResizeMode:{default:'onChange'},
     side: {default: 'Center', type: String},
+    apiControl: Boolean,
+    activateColumnFilters: Boolean,
+    activateSort: Boolean,
     records:{
       type:Array,
       default:[]
@@ -50,7 +53,7 @@ let data = toRef(props,"records");
                                   ></FlexRender>
                               </slot>
                           </div>
-                          <div v-if="header.column.getCanSort()" @click="header.column.toggleSorting()"
+                          <div v-if="activateSort && header.column.getCanSort()" @click="header.column.toggleSorting()"
                                class="p-1 rounded-sm hover:bg-gray-300 transition-all cursor-pointer">
                               <SvgIcons :class="getSortedDirection(header).classes" :name="getSortedDirection(header).icon" />
                           </div>
@@ -71,7 +74,7 @@ let data = toRef(props,"records");
               </template>
 
           </tr>
-          <tr class="py-0">
+          <tr class="py-0" v-if="activateColumnFilters">
               <template :key="header.accessorKey" v-for="(header, index) in header_group.headers">
                   <th :colspan="header.colSpan" scope="col" class="group text-left" :class="header_cell_classes">
 

@@ -1,80 +1,107 @@
-<template>
-          <!-- pagination items -->
-           <div id="paginator" class="flex flex-col lg:flex-row items-center">
-            <!-- pagination controls: chevron-btns and page number items -->
-            <div class="flex space-x-5 items-center">
-
-              <!-- left-chevron buttons -->
-              <button class="flex items-center justify-center hover:bg-gray-300 h-6 w-6 rounded-full transition-all focus:ring-1 focus:ring-green-500"><i class="fa-solid fa-chevron-double-left font-bold text-xs"></i></button>
-              <!-- end of left-chevron btns -->
-
-              <!-- page number items, i.e, 1,2,3 ... -->
-              <div>
-                <ul class="flex space-x-4 items-center">
-                  <li :class="[
-                      page === 1? 'h-6 w-6 flex items-center justify-center rounded-full bg-green-300/50 dark:text-green-200' : 'font-light',
-                      'font-bold text-sm'
-                  ]" v-for="page in pagesArr">
-                    {{page}}
-                  </li>
-                </ul>
-              </div>
-              <!-- end of page number items -->
-
-              <!-- right-chevron buttons -->
-              <button class="flex items-center justify-center hover:bg-gray-300 h-6 w-6 rounded-full transition-all focus:ring-1 focus:ring-green-500"><i class="fa-solid fa-chevron-double-right font-bold text-xs"></i></button>
-              <!-- end of right-chevron btns -->
-            </div>
-            <!-- end of pagination controls -->
-
-            <!-- total pages selector -->
-             <div class="flex items-center space-x-1">
-               <p class="text-xs mr-2">Rows per page:</p>
-               <select class="text-xs py-1 rounded leading-none border-gray-400 dark:bg-churpy-night-box focus:ring-1 focus:ring-churpy-green focus:border-none">
-                 <option :key="index" v-for="(val, index) in rowsPerPageArr">{{val}}</option>
-               </select>
-             </div>
-            <!-- end of total pages selector -->
-           </div>
-</template>
-
 <script>
+import { ref, computed } from "vue";
+import {usePagination} from "./usePagination.js";
 export default {
   name: "ApiPaginator",
-  setup(){
-    /**
-     * @summary:
-     * AP - Api Paginator
-     * props: 
-     * - totalRecords
-     * PC - Parent Component
-     * AP: emit an event to the parent component to update the pagination
-     * PC: listen to the event and acts on it, e.g, make the query
-     *    - get a paginated response from the server
-     * 
-     * 
+  props: {
+    totalRecords: { type: Number, default: 0 },
+    initialPageSize: {type: Number, default:10}
+  },
+  setup(props, { emit }) {
+    const currentPage = ref(1);
+    const isFirstPage = ref(true);
+    const isLastPage = ref(false);
+    const totalPages = ref(1);
+    const initialPgSize = ref(props.initialPageSize);
+    const pageSize = ref(props.initialPageSize);
 
-     From the server:
-     - page number - 10
-     - page size - 4 
-     - total number of records - 40
+     const {pages, pageSizeOptions} = usePagination({
+          totalRecords: props.totalRecords,
+          totalPages: Math.floor(props.totalRecords/pageSize.value),
+          maxButtons: 5,
+          currentPage: currentPage.value,
+      })
+
+    const handlePrev = () => {
+      if(currentPage.value > 1){
+        isLastPage.value = false;
+        isFirstPage.value = false;
+        currentPage.value--;
+      } else {
+        isFirstPage.value = true;
+      }
+
+     emit('paginateRecords', {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value
+       })
+    }
+
+    const handleNext = () => {
+      if(currentPage.value < Math.ceil(props.totalRecords/pageSize.value)){
+        isFirstPage.value = false;
+        currentPage.value++
+      } else {
+       isLastPage.value = true;
+      }
+
+      emit('paginateRecords', {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value
+       })
+    }
+
+    const handlePageSizeChange = (e) => {
+      const val = e.target.value;
+      if(val)pageSize.value = val;
+       emit('paginateRecords', {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value
+       })
+    }
+
+    const handleSelectPage = (item) => {
+      currentPage.value = item;
+      emit('paginateRecords', {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value
+       })
+    }
 
 
-     @examples:
-     - Increase the page size
-     PC: 
+    return {
+      currentPage, isFirstPage,
+      isLastPage, handleNext,
+      handlePrev, totalPages,
+      pageSize, initialPgSize,
+      handlePageSizeChange, handleSelectPage,
+      pages, pageSizeOptions
+    };
 
-
-     */
-    // @TODO: make this dynamic
-  const rowsPerPageArr = [5,10,15,20,40,50,100];
-  const pagesArr = [1,2,3,4,5];
-
-  return { rowsPerPageArr, pagesArr };
-  }
+  },
 }
 </script>
-
-<style scoped>
-
-</style>
+<template>
+  <div class="flex gap-3 justify-between m-3 items-center flex-wrap">
+    <p class="text-xs">Page <b>{{ currentPage }} of {{ Math.ceil(totalRecords/pageSize) }}</b> <span><small>({{ totalRecords }} total records)</small></span></p>
+    <div class="flex justify-between items-center gap-2 flex-wrap">
+      <select v-model="pageSize" @input="handlePageSizeChange" class="rounded leading-none border-gray-300 text-xs focus:outline-none focus:ring-green-500 focus:border-green-500 mr-3 py-1.5 dark:bg-churpy-night dark:border-gray-500">
+        <option value="">---Page Size---</option>
+        <option v-for="(item, idx) in pageSizeOptions" :key="idx" :value="item">{{ item}}</option>
+      </select>
+      <div class="flex flex-wrap">
+        <button class="capitalize relative inline-flex items-center px-2 py-1.5 rounded-l-md border border-gray-300 bg-white dark:bg-churpy-night dark:border-gray-500 text-xs font-medium text-gray-500 hover:bg-gray-50" @click="handlePrev" :disabled="isFirstPage">prev</button>
+      <button  v-for="item in pages"
+        :key="item"
+        :disabled="currentPage === item || item === '...'"
+        @click="handleSelectPage(item)"
+        :class="[
+            currentPage === item ? 'z-10 bg-green-50 dark:bg-green-500 dark:text-white border-green-500 text-green-600' : 'bg-white border-gray-300 dark:bg-churpy-night dark:border-gray-500 dark:text-gray-300 text-gray-500 hover:bg-gray-50'
+        ]"
+        aria-current="page"
+        class="relative transition-all inline-flex items-center px-4 border text-xs py-1.5 font-medium">  {{ item }} </button>
+          <button class="capitalize relative inline-flex items-center px-2 py-1.5 rounded-r-md border border-gray-300 bg-white dark:bg-churpy-night dark:border-gray-500 text-xs font-medium text-gray-500 hover:bg-gray-50" @click="handleNext" :disabled="isLastPage">next</button>
+      </div>
+    </div>
+  </div>
+</template>

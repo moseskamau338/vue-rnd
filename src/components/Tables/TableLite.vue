@@ -6,7 +6,7 @@
        <!-- headers -->
       <div class="sm:flex-auto">
         <slot name="header">
-            <div class="mt-1 relative">
+            <div class="mt-1 relative" v-if="activateGlobalFilter">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <SvgIcons v-if="!initDebounce" name="search" class="fill-slate-500 h-4" />
                 <SvgIcons v-else name="spinner" class="text-slate-500 animate animate-spin h-4" />
@@ -25,7 +25,6 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                   <path fill-rule="evenodd" d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 01-.517.608 7.45 7.45 0 00-.478.198.798.798 0 01-.796-.064l-.453-.324a1.875 1.875 0 00-2.416.2l-.243.243a1.875 1.875 0 00-.2 2.416l.324.453a.798.798 0 01.064.796 7.448 7.448 0 00-.198.478.798.798 0 01-.608.517l-.55.092a1.875 1.875 0 00-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 01-.064.796l-.324.453a1.875 1.875 0 00.2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 01.796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 01.517-.608 7.52 7.52 0 00.478-.198.798.798 0 01.796.064l.453.324a1.875 1.875 0 002.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 01-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 001.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 01-.608-.517 7.507 7.507 0 00-.198-.478.798.798 0 01.064-.796l.324-.453a1.875 1.875 0 00-.2-2.416l-.243-.243a1.875 1.875 0 00-2.416-.2l-.453.324a.798.798 0 01-.796.064 7.462 7.462 0 00-.478-.198.798.798 0 01-.517-.608l-.091-.55a1.875 1.875 0 00-1.85-1.566h-.344zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
                 </svg>
-
             </button>
         </div>
       </div>
@@ -41,10 +40,10 @@
                 ]">
                    <TableMarkup
                        :table-instance="tableInstance"
-                       :records="records" :loading="loading"
+                       :records="records" :loading="loading" :activate-sort="activateSort"
                        :cell_classes="cell_classes" :head_classes="head_classes"
                        :header_cell_classes="header_cell_classes" :row_classes="row_classes"
-                       :side="side"
+                       :side="side" :apiControl="apiControl" :activate-column-filters="activateColumnFilters"
                    />
                 </div>
             </template>
@@ -52,7 +51,13 @@
 
 
 
-        <Paginator :instance="tableInstance" v-if="!removePagination"
+        <ApiPaginator
+                v-if="apiControl"
+                :total-records="totalRecords || records.length"
+                :initialPageSize="initialPageSize"
+                @paginate-records="paginationUpdate" />
+
+        <Paginator v-else :instance="tableInstance" v-if="!removePagination"
                    :initialPageSize="initialPageSize"
                    :totalRecords="totalRecords || records.length"
                    @paginate-records="paginationUpdate" />
@@ -109,6 +114,7 @@ import {
 } from '@tanstack/match-sorter-utils'
 import ColumnFilter from "./ColumnFilter.vue";
 import TableMarkup from "./TableMarkup.vue";
+import ApiPaginator from "./Pagination/ApiPaginator.vue";
 
 
 
@@ -128,7 +134,7 @@ export default {
             return columns
         }
     },
-  components: {TableMarkup, ColumnFilter, SvgIcons, TableSettings, Paginator, Empty, FlexRender},
+  components: {ApiPaginator, TableMarkup, ColumnFilter, SvgIcons, TableSettings, Paginator, Empty, FlexRender},
   props:{
     loading:{default:false},
     settings: Boolean,
@@ -136,12 +142,15 @@ export default {
     selectable:{default:false, type:Boolean},
     headers:{required:true, type:Array},
     actioned:{default:false, type:Boolean},
-    url:{default:''},
     records:{
       type:Array,
       default:[]
     },
     totalRecords: {type: Number},
+    apiControl: Boolean,
+    activateColumnFilters: Boolean,
+    activateGlobalFilter: Boolean,
+    activateSort: Boolean,
     initialPageSize: {type:Number},
      container_classes: {type:String, default: 'ring-1 ring-black ring-opacity-5 md:rounded max-h-[65vh] overflow-y-auto border dark:border-slate-500 rounded'},
      head_classes: {type:String, default: 'bg-gray-200 z-10 dark:bg-churpy-dark whitespace-nowrap'},
@@ -150,7 +159,7 @@ export default {
      cell_classes: {type:String, default: 'px-3 py-1 text-xs text-gray-500 dark:text-gray-300'},
   },
   setup(props, { emit }){
-      const {makeTitle, delayFunction} = helpers
+    const {makeTitle, delayFunction} = helpers
 
     let data = toRef(props,"records");
     let startIndex = ref(0);
@@ -241,6 +250,7 @@ export default {
       data: props.records,
       columns: columns.value,
       getCoreRowModel: getCoreRowModel(),
+      manualPagination: props.apiControl,
         //paginate
       getPaginationRowModel: getPaginationRowModel(),
         //sort
@@ -288,26 +298,26 @@ export default {
        */
     }
 
-  const reOrderColumns = (columns) => {
-      tableInstance.value.setColumnOrder(
-        columns.map(d => d.id)
-      )
+    const reOrderColumns = (columns) => {
+        tableInstance.value.setColumnOrder(
+          columns.map(d => d.id)
+        )
+      }
+
+    const togglePinColumn = (payload) => {
+        let column = tableInstance.value.getColumn(payload.column.id)
+        if (column.getIsPinned() === payload.side){
+            column.pin(false)
+        }else{
+          column.pin(payload.side)
+        }
     }
 
-  const togglePinColumn = (payload) => {
-      let column = tableInstance.value.getColumn(payload.column.id)
-      if (column.getIsPinned() === payload.side){
-          column.pin(false)
-      }else{
-        column.pin(payload.side)
-      }
-  }
-
-const getSortedDirection = (header) => {
-    return {asc:{icon:'chevron-up', classes:'fill-slate-600 h-1.5'},
-          desc:{icon:'chevron-down', classes:'fill-slate-600 h-1.5'}
-      }[header.column.getIsSorted()] ?? {icon:'chevron-both', classes:'fill-slate-400 h-3'}
-}
+    const getSortedDirection = (header) => {
+        return {asc:{icon:'chevron-up', classes:'fill-slate-600 h-1.5'},
+              desc:{icon:'chevron-down', classes:'fill-slate-600 h-1.5'}
+          }[header.column.getIsSorted()] ?? {icon:'chevron-both', classes:'fill-slate-400 h-3'}
+    }
 
     return {
         tableInstance,reOrderColumns, columnResizeMode,

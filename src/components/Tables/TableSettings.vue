@@ -74,16 +74,6 @@
 
                       </fieldset>
                     </div>
-
-                    <div class="mt-8">
-                      <h3>Other Configurations</h3>
-                      <label for="default-toggle" class="pointer-events-none opacity-40 inline-flex relative items-center mb-4 cursor-pointer mt-5">
-                        <input type="checkbox" value="" id="default-toggle" class="sr-only peer">
-                        <div class="w-10 h-5 bg-gray-200 rounded-full peer peer-focus:ring-1 peer-focus:ring-green-500 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-green-100 after:content-[''] after:absolute after:top-0 after:left-[1px] after:bg-slate-500 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-                        <span class="ml-3 text-sm text-slate-500">View Column Search</span>
-                      </label>
-                    </div>
-                    <!-- /End replace -->
                   </div>
                 </div>
                 <div class="flex space-x-5 flex-shrink-0 justify-end px-4 py-4">
@@ -101,10 +91,10 @@
 <script setup lang="ts">
 import { TransitionChild, TransitionRoot } from '@headlessui/vue'
 import helpers from "../../library/helper_functions.js";
-import {ref, toRef, toRefs} from "vue";
+import {ref} from "vue";
 import {useDraggable} from "@vueuse/core";
 import draggable from 'vuedraggable';
-import SvgIcons from "../elements/SvgIcons.vue";
+// import SvgIcons from "../elements/SvgIcons.vue";
 
 
 const col_row_el = ref<HTMLElement | null>(null)
@@ -133,9 +123,9 @@ const {makeTitle} = helpers
 const onDragEnd = (e) => {
     emits('reOrderColumns', props.columns)
 }
-const toggleColumnPinning = (column, side) => {
-    emits('pinColumn', {column, side})
-}
+// const toggleColumnPinning = (column, side) => {
+//     emits('pinColumn', {column, side})
+// }
 
 </script>
 
