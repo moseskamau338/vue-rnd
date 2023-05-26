@@ -1,6 +1,5 @@
 <script>
 import { ref, computed } from "vue";
-import {usePagination} from "./usePagination.js";
 export default {
   name: "Paginator",
   props: {
@@ -15,12 +14,43 @@ export default {
         props.instance.setPageSize(Number(props.initialPageSize))
     }
 
-      const {pages, pageSizeOptions} = usePagination({
-          totalRecords: props.totalRecords,
-          totalPages: props.instance.getPageCount(),
-          maxButtons: 5,
-          currentPage: props.instance.getState().pagination.pageIndex + 1,
-      })
+    // @Todo: Refactor to composable later
+    const maxButtons = 5;
+    const pages = computed(() => {
+      let totalPages = props.instance.getPageCount()
+
+      let numShown = Math.min(maxButtons, totalPages);
+      let first = (props.instance.getState().pagination.pageIndex + 1) - Math.floor(numShown / 2);
+      first = Math.max(first, 1);
+      first = Math.min(first, totalPages - numShown + 1);
+      const resArr = [...Array(numShown)].map((k,i) => i + first);
+      const lastPageArr = ["...", totalPages];
+
+      if(totalPages > maxButtons){
+        return [...[...resArr, ...lastPageArr]];
+      } else {
+        return [...resArr]
+      }
+    });
+
+    const pageSizeOptions = computed(() => {
+      let pageSizeOptionsArr = [];
+      let tensArr = [5, 10,20, 50, 100];
+      let hundredsArr = [300, 500];
+      let thousandsArr = [1000, 2000, 3000, 5000];
+      const total = props.totalRecords;
+
+      if(total > 1000){
+        pageSizeOptionsArr = [...tensArr, ...hundredsArr, ...thousandsArr];
+
+      } else if (total < 1000 && total > 100) {
+        pageSizeOptionsArr = [...tensArr, ...hundredsArr];
+      } else {
+        pageSizeOptionsArr = [...tensArr];
+      }
+      return pageSizeOptionsArr;
+    })
+
 
     const handlePageSizeChange = (e) => {
       const val = e.target.value;

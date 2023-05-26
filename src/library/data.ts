@@ -8,7 +8,7 @@ export const columns = [];
 
 // Generate 200 items
 export const data = [];
-for (let i = 1; i <= 20; i++) {
+for (let i = 1; i <= 500; i++) {
   const item = {};
   columns.forEach((column) => {
     item[column.key] = faker.lorem.words({ min: 1, max: 3 })

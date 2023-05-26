@@ -8,7 +8,7 @@ export function usePagination(options = {
     maxButtons: 5,
     currentPage: 1,
 }) {
-  const pages = computed(() => {
+    const pages = () => {
       let totalPages = options.totalPages
 
       let numShown = Math.min(options.maxButtons, totalPages);
@@ -18,12 +18,15 @@ export function usePagination(options = {
       const resArr = [...Array(numShown)].map((k,i) => i + first);
       const lastPageArr = ["...", totalPages];
 
+      let final = []
       if(totalPages > options.maxButtons){
-        return [...[...resArr, ...lastPageArr]];
+        final = [...[...resArr, ...lastPageArr]];
       } else {
-        return [...resArr]
+        final = [...resArr]
       }
-    });
+
+      return final
+    }
   const pageSizeOptions = computed(() => {
       let pageSizeOptionsArr = [];
       let tensArr = [5, 10,20, 50, 100];
