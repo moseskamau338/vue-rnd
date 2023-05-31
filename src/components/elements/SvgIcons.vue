@@ -38,6 +38,15 @@ defineProps(['name'])
       <path fill-rule="evenodd" d="M12.556 17.329l4.183 4.182a3.375 3.375 0 004.773-4.773l-3.306-3.305a6.803 6.803 0 01-1.53.043c-.394-.034-.682-.006-.867.042a.589.589 0 00-.167.063l-3.086 3.748zm3.414-1.36a.75.75 0 011.06 0l1.875 1.876a.75.75 0 11-1.06 1.06L15.97 17.03a.75.75 0 010-1.06z" clip-rule="evenodd" />
     </svg>
 
+  <svg v-else-if="name === 'categories'" xmlns="http://www.w3.org/2000/svg" width="16.29" height="16.333" viewBox="0 0 16.29 16.333">
+    <g id="Group_2007" data-name="Group 2007" transform="translate(-2.5 -2.45)">
+      <path id="Path_864" data-name="Path 864" d="M7.652,9.352H14a.807.807,0,0,0,.686-1.286L11.51,2.836a.881.881,0,0,0-1.458,0L6.88,8.066A.853.853,0,0,0,7.652,9.352Z" transform="translate(-0.607 0)"/>
+      <circle id="Ellipse_48" data-name="Ellipse 48" cx="3.858" cy="3.858" r="3.858" transform="translate(11.074 11.067)"/>
+      <path id="Path_865" data-name="Path 865" d="M8.5,13H3.357a.922.922,0,0,0-.857.857V19a.922.922,0,0,0,.857.857H8.5A.922.922,0,0,0,9.359,19V13.857A.922.922,0,0,0,8.5,13Z" transform="translate(0 -1.505)"/>
+    </g>
+  </svg>
+
+
 
 
 

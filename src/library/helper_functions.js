@@ -35,6 +35,22 @@ export default {
 
          return {initDebounce, handleKeydown}
      },
+    searchFilter(collection, term){
+          if (!collection || collection.length <= 0) return []
+          if (term.length === 0){
+            return collection
+          }else{
+            //collection
+              let keys = Object.keys(collection?.[0]) || []
+            return collection.filter((client) => {
+                let res = false
+                keys.forEach((key) => {
+                    res ||= String(client[key]).toLowerCase().includes(term.toLowerCase())
+                })
+                return res
+            })
+          }
+    },
     makeTitle(slug, separator = '-') {
       let words = slug.split(separator);
 
