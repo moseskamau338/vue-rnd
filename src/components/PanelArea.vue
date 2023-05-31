@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {useDraggable, useMouse, useElementBounding, clamp } from '@vueuse/core'
-
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
+import CButton from "@/components/elements/CButton.vue";
 
 defineProps({
-    page: {type: Object, required: true}
+    page: {type: Object, required: true},
 })
 
 const el = ref<HTMLElement | null>(null)
 const handle = ref<HTMLElement | null>(null)
 const container = ref<HTMLElement | null>(null)
+const dashboard_options = ref([
+    {label: 'Edit Page', key:'', action:() => editing_mode.value = true},
+    {label: 'Update Variables', key:'', action:() => {}},
+    {label: 'Delete Page', key:'', action:() => {}},
+])
+const editing_mode = ref(false)
 
 // `style` will be a helper computed for `left: ?px; top: ?px;`
 const { x, y, style } = useDraggable(el, {
@@ -18,14 +24,14 @@ const { x, y, style } = useDraggable(el, {
     handle
 })
 
-const { left, right, top, bottom } = useElementBounding(container);
-const { width: containerWidth, height: containerHeight } = useElementBounding(el);
+const { left, right, top, bottom,  width: containerWidth, height: containerHeight } = useElementBounding(container);
+const { width: panelWidth, height: panelHeight } = useElementBounding(el);
 
 const restrictedX = computed(() =>
-  clamp(left.value, x.value, right.value - containerWidth.value)
+  clamp(left.value, x.value, right.value - panelWidth.value)
 );
 const restrictedY = computed(() =>
-  clamp(top.value, y.value, bottom.value - containerHeight.value)
+  clamp(top.value, y.value, bottom.value - panelHeight.value)
 );
 
 
@@ -44,10 +50,16 @@ const restrictedY = computed(() =>
       isResizing.value = false
     }
 
+    const setMousePosition = () => {
+      mouseX.value = width.value
+      mouseY.value = height.value
+    }
+
     const resize = () => {
       if (!isResizing.value) return
       width.value = mouseX.value
       height.value = mouseY.value
+      setMousePosition()
     }
 
     onMounted(() => {
@@ -66,7 +78,7 @@ const restrictedY = computed(() =>
 <template>
     <header class="flex justify-between">
         <div></div>
-        <div class="space-x-5 flex items-center">
+        <div class="space-x-5 flex items-center transition-all duration-300">
             <div class="flex items-center flex-row">
                 <input type="date" class="focus:ring-green-500 focus:border-green-500 block sm:text-xs border-gray-300 rounded placeholder:text-xs" placeholder="Enter page name...">
                 <span class="text-slate-400 text-xs px-3">to</span>
@@ -98,33 +110,31 @@ const restrictedY = computed(() =>
                   class="absolute right-0 mt-8 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                 >
                   <div class="px-1 py-1">
-                    <MenuItem v-slot="{ active }">
-                      <button
-                        :class="[
-                          active ? 'bg-gray-300/30' : '',
-                          'group flex w-full items-center rounded px-2 py-2 text-xs',
-                        ]"
-                      >
-                        Edit
-                      </button>
-                    </MenuItem>
-                    <MenuItem v-slot="{ active }">
-                      <button
-                        :class="[
-                          active ? 'bg-gray-300/30' : 'text-gray-900',
-                          'group flex w-full items-center rounded px-2 py-2 text-xs',
-                        ]"
-                      >
-                        Edit Variables
-                      </button>
-                    </MenuItem>
+                      <template v-for="item in dashboard_options">
+                        <MenuItem v-slot="{ active }">
+                          <button
+                            @click="item.action"
+                            :class="[
+                              active ? 'bg-gray-300/30' : '',
+                              'group flex w-full items-center rounded px-2 py-2 text-xs',
+                            ]"
+                          >
+                              {{ item.label }}
+                          </button>
+                        </MenuItem>
+                      </template>
                   </div>
                 </MenuItems>
               </transition>
             </Menu>
+
+            <div v-if="editing_mode" class="flex space-x-2 transition-all duration-500">
+                <CButton @click="editing_mode = false" variant="success">Save</CButton>
+                <CButton @click="editing_mode = false" variant="secondary">Cancel</CButton>
+            </div>
         </div>
     </header>
-  <div ref="container" class="graph-paper min-h-[500px] w-full border mt-8">
+  <div ref="container" :class="{'graph-paper border' : editing_mode}" class="min-h-[700px] w-full mt-8">
       <div ref="el" :style="{
           userSelect: 'none',
           position: 'fixed',
@@ -132,16 +142,10 @@ const restrictedY = computed(() =>
           left: `${restrictedX}px`,
         }" id="panel" class="relative group">
           <div class='resizable'>
-            <div :style="{ width: `${width}px`, height: `${height}px` }" class="bg-white shadow-lg rounded-md min-w-[300px] min-h-[200px]">
-
-              <!--Resizers-->
-              <div class='absolute bottom-0 right-0 pointer-events-auto hover:cursor-nwse-resize'>
-                <div class='border-r-4 border-b-4 rounded border-slate-500 w-6 h-6' @mousedown="startResize"></div>
-              </div>
-
+            <div :style="{ width: `${width}px`, height: `${height}px` }" :class="{'shadow-lg' : editing_mode}" class="bg-white rounded-md min-w-[300px] min-h-[200px] transition-all duration-300">
               <header id="panel_handle" class="bg-slate-200 flex justify-between py-1 px-3 rounded-t-md text-slate-500">
                   <div class="flex items-center space-x-2">
-                      <span ref="handle" class="opacity-40 hover:cursor-move px-1 py-0.5 hover:bg-slate-300/50 rounded transition-all flex flex-col -space-y-1 leading-none text-xs">
+                      <span v-if="editing_mode" ref="handle" class="opacity-40 hover:cursor-move px-1 py-0.5 hover:bg-slate-300/50 rounded transition-all flex flex-col -space-y-1 leading-none text-xs">
                           <span>&bull;&bull;&bull;</span>
                           <span>&bull;&bull;&bull;</span>
                       </span>
@@ -163,19 +167,23 @@ const restrictedY = computed(() =>
                   </span>
                 </div>
               </header>
-
                 <div>
                     <ul>
-                        <li>X: {{x}}</li>
-                        <li>Y: {{y}}</li>
+                        <li>X: {{restrictedX}}</li>
+                        <li>Y: {{restrictedY}}</li>
                         <li>Width: {{width}}</li>
                         <li>Height: {{height}}</li>
+                        <li>--------------------------</li>
+                        <li>Mouse position: x: {{mouseX}} y: {{mouseY}}</li>
                     </ul>
                 </div>
             </div>
           </div>
-
+          <button v-if="editing_mode" @mousedown="startResize" class="bottom-0 right-0 absolute pointer-events-auto hover:cursor-nwse-resize flex items-center justify-between grow-0 shrink-0 hover:bg-gray-200 w-fit p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="fill-gray-400 h-4 w-4 -rotate-45" viewBox="0 0 320 512"><path d="M182.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L128 109.3V402.7L86.6 361.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0l96-96c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 402.7V109.3l41.4 41.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-96-96z"/></svg>
+            </button>
         </div>
+
 
   </div>
 </template>

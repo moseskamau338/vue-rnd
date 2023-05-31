@@ -1,7 +1,7 @@
 <template>
 <TabGroup >
   <TabList class="flex flex-col lg:flex-row lg:justify-between space-y-4 lg:space-y-reverse items-center mt-3">
-    <div class="flex p-1 space-x-1 dark:bg-churpy-dark bg-gray-200 rounded-lg max-w-fit">
+    <div class="flex p-1 space-x-1 dark:bg-brand-dark bg-gray-200 rounded-lg max-w-fit">
 
         <!--Add Analytics-->
         <Tab

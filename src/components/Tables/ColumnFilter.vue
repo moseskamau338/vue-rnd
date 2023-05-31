@@ -37,7 +37,7 @@ const firstValue = props.table
     <template v-else>
         <input type="text"
                 @keydown="handleKeydown"
-               class="focus:ring-green-600 focus:border-green-600 focus:outline-0 block dark:bg-churpy-night-box dark:border-gray-500 p-0.5 rounded text-xs leading-relaxed bg-gray-100 border border-gray-300 text-slate-500 placeholder:text-slate-400"
+               class="focus:ring-green-600 focus:border-green-600 focus:outline-0 block dark:bg-brand-night-box dark:border-gray-500 p-0.5 rounded text-xs leading-relaxed bg-gray-100 border border-gray-300 text-slate-500 placeholder:text-slate-400"
             v-model="columnFilterValue"
            :placeholder="`Search...`">
     </template>

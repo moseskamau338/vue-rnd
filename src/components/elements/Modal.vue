@@ -10,8 +10,8 @@
             <!-- This element is to trick the browser into centering the modal contents. -->
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-              <div :class="getSize()" class="relative inline-block bg-white dark:bg-churpy-night-box rounded-lg  text-left overflow-hidden shadow-xl transform transition-all sm:my-8 w-full align-middle sm:align-middle sm:w-full">
-                <header v-if="!asAlert" class="bg-gradient-to-r from-green-600 via-churpy-green to-churpy-night-box/90 dark:bg-gray-700 m-0 pt-3 pb-2 flex justify-between text-white px-4">
+              <div :class="getSize()" class="relative inline-block bg-white dark:bg-brand-night-box rounded-lg  text-left overflow-hidden shadow-xl transform transition-all sm:my-8 w-full align-middle sm:align-middle sm:w-full">
+                <header v-if="!asAlert" class="bg-gradient-to-r from-green-600 via-brand-green to-brand-night-box/90 dark:bg-gray-700 m-0 pt-3 pb-2 flex justify-between text-white px-4">
                   <h3>
                     <slot name="title">Title here</slot>
                   </h3>
@@ -30,7 +30,7 @@
 
                 <div id="churpy-modal-footer" class="flex justify-end px-4 py-2 pb-3 mt-5 w-full bottom-0 fixed">
                   <slot name="footer">
-                    <button @click="close" type="button" class="inline-flex items-center px-2.5 py-0.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-churpy-green hover:bg-churpy-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-churpy-green">
+                    <button @click="close" type="button" class="inline-flex items-center px-2.5 py-0.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-brand-green hover:bg-brand-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green">
                       <slot name="done-text">Done</slot>
                     </button>
                   </slot>

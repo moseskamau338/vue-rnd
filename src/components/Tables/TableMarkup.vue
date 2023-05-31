@@ -92,7 +92,7 @@ let data = toRef(props,"records");
       </template>
     </thead>
    <!-- table body -->
-   <tbody class="divide-y divide-gray-200 dark:divide-slate-600 bg-white dark:bg-churpy-dark/60 h-9 overflow-auto">
+   <tbody class="divide-y divide-gray-200 dark:divide-slate-600 bg-white dark:bg-brand-dark/60 h-9 overflow-auto">
 
         <!-- table row(s) -->
         <template v-if="!loading && data.length > 0" v-for="row in tableInstance.getRowModel().rows" :key="row.id">

@@ -7,13 +7,13 @@
         <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
           <TransitionChild as="template" enter="transform transition ease-in-out duration-150" enter-from="translate-x-full" enter-to="translate-x-0" leave="transform transition ease-in-out duration-300" leave-from="translate-x-0" leave-to="translate-x-full">
             <div class="pointer-events-auto w-screen max-w-md">
-              <div class="flex h-full flex-col divide-y divide-gray-200 bg-white dark:bg-churpy-night-box shadow-xl">
+              <div class="flex h-full flex-col divide-y divide-gray-200 bg-white dark:bg-brand-night-box shadow-xl">
                 <div class="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
                   <div class="px-4 sm:px-6">
                     <div class="flex items-start justify-between">
                       <h2 class="text-lg font-medium"> Table Settings </h2>
                       <div class="ml-3 flex h-7 items-center">
-                        <button type="button" class="group flex justify-center items-center rounded-full h-8 w-8 bg-slate-200 dark:bg-churpy-night focus:ring-green-500 focus:border-green-500" @click="$emit('close')">
+                        <button type="button" class="group flex justify-center items-center rounded-full h-8 w-8 bg-slate-200 dark:bg-brand-night focus:ring-green-500 focus:border-green-500" @click="$emit('close')">
                           <span class="sr-only">Close panel</span>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="group-hover:text-slate-500 text-slate-400 w-6 h-6 transition-all">
                               <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" />
