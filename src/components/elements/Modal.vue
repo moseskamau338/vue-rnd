@@ -1,5 +1,5 @@
 <template>
-  <teleport to="#modals">
+  <teleport to="body">
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" class="fixed z-[70] inset-0 overflow-y-auto" @close="close">
           <div v-bind="$attrs" class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -17,10 +17,13 @@
                   </h3>
                   <div class="flex space-x-2 items-center">
                     <slot name="title_side"></slot>
-                    <h6 class="font-brand opacity-40 mx-2">Churpy</h6>
+<!--                    <h6 class="font-brand opacity-40 mx-2">Churpy</h6>-->
 
-                    <button v-if="!noClose" @click="close" class="bg-gray-300/70 h-6 w-6 text-xs ml-3 text-gray-700 rounded-full flex items-center justify-center shadow hover:bg-gray-200 hover:text-gray-500 hover:scale-105 transition-all">
-                      <i class="fa-solid fa-close"></i>
+                    <button v-if="!noClose" @click="close" class="bg-gray-300/70 h-6 w-6 ml-3 rounded-full flex items-center justify-center shadow hover:bg-gray-200 hover:scale-105 transition-all">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700 hover:text-gray-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+
                     </button>
                   </div>
                 </header>

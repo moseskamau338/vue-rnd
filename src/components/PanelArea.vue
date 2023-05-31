@@ -3,6 +3,7 @@ import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {useDraggable, useMouse, useElementBounding, clamp } from '@vueuse/core'
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import CButton from "@/components/elements/CButton.vue";
+import PanelWorkshop from "@/components/Panel/PanelWorkshop.vue";
 
 defineProps({
     page: {type: Object, required: true},
@@ -17,6 +18,7 @@ const dashboard_options = ref([
     {label: 'Delete Page', key:'', action:() => {}},
 ])
 const editing_mode = ref(false)
+const show_panel_wizard = ref(false)
 
 // `style` will be a helper computed for `left: ?px; top: ?px;`
 const { x, y, style } = useDraggable(el, {
@@ -76,8 +78,8 @@ const restrictedY = computed(() =>
 </script>
 
 <template>
-    <header class="flex justify-between">
-        <div></div>
+    <header class="flex justify-between relative z-10">
+        <div>Show panel: {{show_panel_wizard}}</div>
         <div class="space-x-5 flex items-center transition-all duration-300">
             <div class="flex items-center flex-row">
                 <input type="date" class="focus:ring-green-500 focus:border-green-500 block sm:text-xs border-gray-300 rounded placeholder:text-xs" placeholder="Enter page name...">
@@ -86,7 +88,7 @@ const restrictedY = computed(() =>
             </div>
             <Menu as="div" className="relative flex">
               <!--inline-block text-left-->
-                <button class="border border-gray-300 w-full justify-center rounded-l px-4 py-1.5 text-xs font-medium focus:outline-none">+ Add Panel</button>
+                <button @click="show_panel_wizard = !show_panel_wizard" class="border border-gray-300 w-full justify-center rounded-l px-4 py-1.5 text-xs font-medium focus:outline-none hover:bg-slate-200 transition-all duration-300">+ Add Panel</button>
               <div>
                 <MenuButton
                   class="border border-l-0 border-gray-300 inline-flex w-full justify-center rounded-r px-2 py-1.5 text-sm font-medium focus:outline-none"
@@ -134,13 +136,13 @@ const restrictedY = computed(() =>
             </div>
         </div>
     </header>
-  <div ref="container" :class="{'graph-paper border' : editing_mode}" class="min-h-[700px] w-full mt-8">
+  <div ref="container" :class="{'graph-paper border' : editing_mode}" class="min-h-[700px] w-full mt-8 transition-all duration-300">
       <div ref="el" :style="{
           userSelect: 'none',
           position: 'fixed',
           top: `${restrictedY}px`,
           left: `${restrictedX}px`,
-        }" id="panel" class="relative group">
+        }" id="panel" class="relative group z-0">
           <div class='resizable'>
             <div :style="{ width: `${width}px`, height: `${height}px` }" :class="{'shadow-lg' : editing_mode}" class="bg-white rounded-md min-w-[300px] min-h-[200px] transition-all duration-300">
               <header id="panel_handle" class="bg-slate-200 flex justify-between py-1 px-3 rounded-t-md text-slate-500">
@@ -186,6 +188,8 @@ const restrictedY = computed(() =>
 
 
   </div>
+
+  <PanelWorkshop :open="show_panel_wizard" />
 </template>
 
 <style>
