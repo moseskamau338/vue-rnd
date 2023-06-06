@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="fixed z-[70] inset-0 overflow-y-auto" @close="close">
+        <Dialog as="div" class="fixed z-[70] inset-0 overflow-y-auto scrollbar-hide" @close="close">
           <div v-bind="$attrs" class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
               <DialogOverlay class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
@@ -93,7 +93,7 @@ export default {
 
     function close(){
       if (!props.noClose){
-        emitter.emit('close_modal', props.source)
+       emit('close_modal', props.source)
       }
     }
     /*

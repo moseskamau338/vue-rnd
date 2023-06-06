@@ -54,7 +54,7 @@ const addPage = () => {
             <button v-if="!showAddPageInput" @click="showAddPageInput = true" class="border border-dashed border-slate-300 dark:border-slate-600 w-7/12 py-1.5 text-slate-400 dark:text-slate-700 hover:scale-105 transition-all duration-300 rounded">+ New Page</button>
         </TabList>
 
-        <TabPanels class="col-span-10 focus:outline-0 h-screen">
+        <TabPanels class="col-span-10 focus:outline-0 h-screen scrollbar-hide">
             <template v-for="page in pages">
                   <TabPanel class="focus:outline-0">
                      <PanelArea :page="page" />

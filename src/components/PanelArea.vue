@@ -136,10 +136,10 @@ const restrictedY = computed(() =>
             </div>
         </div>
     </header>
-  <div ref="container" :class="{'graph-paper border' : editing_mode}" class="min-h-[700px] w-full mt-8 transition-all duration-300">
+  <div ref="container" :class="{'graph-paper border' : editing_mode}" class="min-h-[700px] w-full mt-8 transition-all duration-300 relative">
       <div ref="el" :style="{
           userSelect: 'none',
-          position: 'fixed',
+          position: editing_mode ? 'fixed' : 'absolute',
           top: `${restrictedY}px`,
           left: `${restrictedX}px`,
         }" id="panel" class="relative group z-0">
@@ -189,7 +189,7 @@ const restrictedY = computed(() =>
 
   </div>
 
-  <PanelWorkshop :open="show_panel_wizard" />
+  <PanelWorkshop :open="show_panel_wizard" @close="show_panel_wizard = false"/>
 </template>
 
 <style>
