@@ -5,7 +5,7 @@
 
         <!--Add Analytics-->
         <Tab
-          v-for="category in ['Prompt','Options', 'Styles']"
+          v-for="category in ['Options', 'Styles']"
           as="template"
           v-slot="{ selected }"
         >
@@ -25,14 +25,20 @@
   </TabList>
 
   <TabPanels class="mt-2 bg-transparent">
-      <TabPanel class="h-full p-3">
-      <div>Prompt API: {}</div>
+    <!--<TabPanel class="h-full p-3">-->
+    <!--  <div>Prompt API: {}</div>-->
+    <!--</TabPanel>-->
+    <TabPanel class="h-full p-3">
+      <div>
+         <QueryBuilder v-if="panelStore.panels[panelId]?.['options']" :query-options="panelStore.panels[panelId]?.['options']" />
+          <Empty v-else description="No panel options found" title="" />
+      </div>
     </TabPanel>
     <TabPanel class="h-full p-3">
-      <div>Options API: {}</div>
-    </TabPanel>
-    <TabPanel class="h-full p-3">
-      <div>Styles API: {}</div>
+        <div>
+          <Styler v-if="panelStore.panels[panelId]?.['styles']" :styles="panelStore.panels[panelId]?.['styles']" />
+          <Empty v-else description="No panel style options found selected" title="" />
+        </div>
     </TabPanel>
   </TabPanels>
 
@@ -41,12 +47,28 @@
 
 <script>
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import Empty from "@/components/elements/Empty.vue";
+import {usePanelStore} from "@/stores/panels.js";
+import Styler from "@/components/Panel/Styler.vue";
+import QueryBuilder from "@/components/Panel/QueryBuilder.vue";
 
 export default {
 name: "PanelOptions",
-components:{
-TabGroup, TabList, Tab, TabPanels, TabPanel
-},
+  components:{
+      QueryBuilder,
+      Styler,
+    Empty,
+    TabGroup, TabList, Tab, TabPanels, TabPanel
+  },
+  props:{
+      panelId:{type: String, required: true}
+  },
+  setup(props){
+    const panelStore = usePanelStore()
+      console.log(panelStore.panels[props.panelId])
+
+      return {panelStore}
+  }
 }
 </script>
 

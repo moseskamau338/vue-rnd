@@ -1,6 +1,6 @@
 <template>
     
-    <div class="px-4">
+    <div class="">
      
     <div class="sm:flex sm:items-center">
        <!-- headers -->

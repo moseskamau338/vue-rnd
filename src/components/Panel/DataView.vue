@@ -7,7 +7,7 @@
 
 <script setup>
 import TableLite from "../Tables/TableLite.vue";
-import { data, columns } from "../../library/data";
+import { data, columns } from "@/library/data.ts";
 </script>
 
 <style scoped>

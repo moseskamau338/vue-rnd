@@ -53,7 +53,7 @@ export class useWizard{
       setTimeout(()=>{
         this.processing.value = false
           this.switchTab(this.activeComponent.value.id - 1)
-      }, 1000)
+      }, 100)
     }
     switchTab = (id) => {
       if (id <= this.tabs.value.length) {

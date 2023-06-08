@@ -182,7 +182,7 @@ const hasPreviousResult = computed(() => {
                                     <small class="text-slate-500">This will tell what the panel is about at a glance</small>
                                 </div>
                             </div>
-                            <PanelEditor class="mt-4 h-[60vh] overflow-y-scroll" />
+                            <PanelEditor class="mt-4" />
                         </div>
                     </section>
                 </section>
