@@ -1,6 +1,9 @@
+import Label from "@/components/Panel/widgets/label/Label.vue";
+
 export const label_options = {
     id: "label",
     name: 'Label',
+    component: Label,
     image:'/images/number.png',
     categories:['Label', 'all'],
     query: {

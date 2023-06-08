@@ -33,7 +33,7 @@
           <PanelOptions :panel-id="selectedItem.id" />
        </div>
        <div class="col-span-9 grid grid-rows-2 gap-4 h-[60vh] overflow-y-scroll">
-           <Visualizer class="row-span-1" />
+           <Visualizer :widget="selectedItem" class="row-span-1" />
 
            <div class="row-span-1">
              <DataView />
@@ -49,22 +49,16 @@ import CustomSelect from "../CustomSelect.vue";
 import PanelOptions from "./PanelOptions.vue";
 import Visualizer from "./Visualizer.vue";
 import DataView from "./DataView.vue";
+import {usePanelStore} from "@/stores/panels.js";
 
 export default {
     name: "PanelEditor",
     components: {DataView, Visualizer, PanelOptions, CustomSelect},
     setup(){
-        const options = ref([
-        {id: 'label', name: 'Label', image:'/images/number.png', categories:['Label', 'all']},
-        {id: 'table_view', name: 'Table View', image:'/images/table.png', categories:['Table','all']},
-        {id: 'pie_chart', name: 'Pie Chart', image:'/images/pie.png', categories:['Correlation', 'Distribution', 'all']},
-        {id: 'bar_chart', name: 'Bar Chart', image:'/images/bar.png', categories:['Correlation', 'Distribution', 'all']},
-        {id: 'line_chart', name: 'Line Chart', image:'/images/line.png', categories:['Correlation', 'Distribution', 'all']},
-        {id: 'area_chart', name: 'Area Chart', image:'/images/area.png', categories:['Correlation', 'Distribution', 'all']},
-        {id: 'mixed_chart', name: 'Mixed Chart', image:'/images/mixed.png', categories:['Correlation', 'Distribution', 'all']},
-        {id: 'dynamic_label', name: 'Dynamic Label (Big Number, Dynamic Text)', image:'/images/number.png', categories:['Metrics/KPI', 'all']},
-        {id: 'number_trend_line', name: 'Number Trend Line', image:'/images/trendline.png', categories:['Metrics/KPI','Correlation', 'Distribution', 'all']},
-      ])
+        const panelStore = usePanelStore()
+        const options = ref(Object.keys(panelStore.panels).map((panel) => {
+            return panelStore.panels[panel].options
+        }))
         const selectedItem = ref(options.value[0])
 
         return {options, selectedItem}
