@@ -1,12 +1,13 @@
 <script setup>
 const props = defineProps({
-    config: {type: String, required: true}
+    instance: {type: Object, required: true}
 })
+
 </script>
 
 <template>
-  <div class="">
-      label here
+  <div class="p-2 bg-white dark:bg-brand-night-box shadow-lg border-2 border-slate-200 dark:border-slate-700 w-fit rounded">
+      {{instance.requirements.fields[0].defaultValue}}
   </div>
 </template>
 

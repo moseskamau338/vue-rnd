@@ -59,7 +59,7 @@ import {
 } from '@headlessui/vue'
 
 const props = defineProps({
-    modelValue: String,
+    modelValue: Object,
     multiple: Boolean,
     placeholder: {type:String, default:'Search items...'},
     options: {type:Array, default:[]}

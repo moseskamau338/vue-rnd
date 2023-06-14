@@ -18,6 +18,9 @@
 
 <template>
  <div>
+     <div>
+         {{styles.requirements.fields.styles}}
+     </div>
      <form action="#">
       <!--db inputs-->
           <label for="dataset" class="text-slate-400 text-xs">Colors</label>

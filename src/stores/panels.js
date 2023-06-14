@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
-import {label_options, styles} from "@/components/Panel/widgets/label/index.js";
-import {pie_options, styles as pieStyles} from "@/components/Panel/widgets/pie_chart/index.js";
+import bar_chart from "@/components/Panel/widgets/bar_chart";
+import label from "@/components/Panel/widgets/label";
 
 export const usePanelStore = defineStore('panelsStore', {
    state: () => ({
        panels: {
-           label:{options:label_options, styles},
-           pie_chart:{options:pie_options, pieStyles}
+           bar_chart: bar_chart,
+           label: label
        },
    }),
 })

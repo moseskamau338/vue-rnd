@@ -30,13 +30,13 @@
     <!--</TabPanel>-->
     <TabPanel class="h-full p-3">
       <div>
-         <QueryBuilder v-if="panelStore.panels[panelId]?.['options']" :query-options="panelStore.panels[panelId]?.['options']" />
+         <QueryBuilder v-if="panel" :query-options="panel" />
           <Empty v-else description="No panel options found" title="" />
       </div>
     </TabPanel>
     <TabPanel class="h-full p-3">
         <div>
-          <Styler v-if="panelStore.panels[panelId]?.['styles']" :styles="panelStore.panels[panelId]?.['styles']" />
+          <Styler v-if="panel" :styles="panel" />
           <Empty v-else description="No panel style options found selected" title="" />
         </div>
     </TabPanel>
@@ -48,7 +48,7 @@
 <script>
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import Empty from "@/components/elements/Empty.vue";
-import {usePanelStore} from "@/stores/panels.js";
+//import {usePanelStore} from "@/stores/panels.js";
 import Styler from "@/components/Panel/Styler.vue";
 import QueryBuilder from "@/components/Panel/QueryBuilder.vue";
 
@@ -61,13 +61,10 @@ name: "PanelOptions",
     TabGroup, TabList, Tab, TabPanels, TabPanel
   },
   props:{
-      panelId:{type: String, required: true}
+      panel:{type: Object, required: true}
   },
   setup(props){
-    const panelStore = usePanelStore()
-      console.log(panelStore.panels[props.panelId])
 
-      return {panelStore}
   }
 }
 </script>
