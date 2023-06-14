@@ -2,7 +2,6 @@
 <section class="">
    <div class="rounded grid grid-cols-12 gap-4">
        <div class="col-span-3 p-2 border-r">
-           {{selectedItem.id}}
            <CustomSelect v-model="selectedItem" :options="options" label="name" placeholder="Choose visualization">
                <template #selected-items="{selected}">
                    <div class="flex space-x-2 items-center p-1">

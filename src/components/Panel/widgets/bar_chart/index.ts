@@ -6,13 +6,18 @@ const default_requirements: visualizer_requirements = {
     data: [23, 24, 18, 25, 27, 28, 25],
     categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     chartOptions: {
+        title: {
+         text: 'Chart Title',
+         left: 'center',
+         rich: {}
+       },
         legend: {
             type: 'scroll',
             orient: 'vertical',
             right: 10,
             top: 20,
             bottom: 20,
-            data: ['Chart data']
+            // data: ['Chart data']
           },
           xAxis: {
             type: 'category',
