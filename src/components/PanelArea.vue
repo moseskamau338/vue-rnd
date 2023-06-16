@@ -18,6 +18,7 @@ const dashboard_options = ref([
     {label: 'Delete Page', key:'', action:() => {}},
 ])
 const is_editing = ref(false)
+const is_mounted = ref(false)
 const show_panel_wizard = ref(false)
 const grid = ref(null);
 const widgets = ref([
@@ -100,7 +101,7 @@ async function addWidget() {
     id: widgetCount,
     title: `Widget ${widgetCount}`,
     grid: {
-      w: 3,
+      w: 2,
       h: 1,
     },
   };
@@ -133,6 +134,7 @@ function toggleEdit() {
 
 onMounted(() => {
   initGridStack();
+  is_mounted.value = true
 });
 
 
@@ -140,9 +142,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <header class="flex justify-between relative z-10">
-        <div></div>
-        <div class="space-x-5 flex items-center transition-all duration-300">
+   <teleport v-if="is_mounted" to="#panel-dashboard-header">
+       <div class="space-x-5 flex items-center transition-all duration-300">
             <div class="flex items-center flex-row">
                 <input type="date" class="focus:ring-green-500 focus:border-green-500 block sm:text-xs border-gray-300 rounded placeholder:text-xs dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100" placeholder="Enter page name...">
                 <span class="text-slate-400 text-xs px-3">to</span>
@@ -196,8 +197,9 @@ onMounted(() => {
                 <CButton @click="toggleEdit" variant="success">Save</CButton>
                 <CButton @click="toggleEdit" variant="secondary">Cancel</CButton>
             </div>
-        </div>
-    </header>
+       </div>
+
+   </teleport>
   <div :class="{'graph-paper border dark:border-slate-700' : is_editing}"
        class="min-h-[700px] w-full mt-8 transition-all duration-300 relative">
         <div class="py-2 px-2.5 flex justify-end space-x-2">
