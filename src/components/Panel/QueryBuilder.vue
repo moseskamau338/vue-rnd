@@ -50,21 +50,19 @@ const props = defineProps({
                 </select>
               </div>
           </div>
-          <div v-else>
-            <!--@Todo: loop through custom fields and create form-->
-              <FormGenerator :elements="queryOptions.requirements.fields"/>
-          </div>
-        <p v-if="queryOptions.requirements.backend_query" class="text-slate-400 text-xs mt-4">Chart Appearance</p>
-          <div v-if="queryOptions.requirements.backend_query" class="grid grid-cols-1 md:grid-cols-4 gap-y-2 mt-2">
-              <div class="col-span-2 relative flex items-start" v-for="label in ['Donut', 'Show Labels', 'Show Legend', 'Show Total']">
-                <div class="flex items-center h-5">
-                  <input :id="label" :name="label" type="checkbox" class="focus:ring-0 focus:ring-green-500 h-3 w-3 text-green-600 border-gray-300 rounded-sm">
-                </div>
-                <div class="ml-1 text-sm">
-                  <label :for="label" class="text-xs">{{ label }}</label>
-                </div>
-              </div>
-          </div>
+          <p v-if="queryOptions.requirements.fields" class="text-slate-400 text-xs mt-4">Chart Appearance</p>
+          <!--@Todo: loop through custom fields and create form-->
+          <FormGenerator :elements="queryOptions.requirements.fields"/>
+          <!--<div v-if="queryOptions.requirements.backend_query" class="grid grid-cols-1 md:grid-cols-4 gap-y-2 mt-2">-->
+          <!--    <div class="col-span-2 relative flex items-start" v-for="label in ['Donut', 'Show Labels', 'Show Legend', 'Show Total']">-->
+          <!--      <div class="flex items-center h-5">-->
+          <!--        <input :id="label" :name="label" type="checkbox" class="focus:ring-0 focus:ring-green-500 h-3 w-3 text-green-600 border-gray-300 rounded-sm">-->
+          <!--      </div>-->
+          <!--      <div class="ml-1 text-sm">-->
+          <!--        <label :for="label" class="text-xs">{{ label }}</label>-->
+          <!--      </div>-->
+          <!--    </div>-->
+          <!--</div>-->
       </div>
   </div>
 </template>

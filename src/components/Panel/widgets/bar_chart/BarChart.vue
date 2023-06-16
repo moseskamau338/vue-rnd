@@ -10,7 +10,7 @@ import {
   LegendComponent,AxisPointerComponent
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
-import {provide} from "vue";
+import {provide, watch} from "vue";
 
 use([
   CanvasRenderer,
@@ -21,9 +21,17 @@ use([
   AxisPointerComponent
 ]);
 
-defineProps(['instance'])
+const props = defineProps(['instance'])
 
 provide(THEME_KEY, 'light');
+
+watch(props.instance.requirements.style_fields, () => {
+   props.instance.updateStyles()
+})
+watch(props.instance.requirements, () => {
+    props.instance.updateChartOptions()
+})
+
 </script>
 
 <template>

@@ -6,7 +6,14 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="p-2 bg-white dark:bg-brand-night-box shadow-lg border-2 border-slate-200 dark:border-slate-700 w-fit rounded">
+  <div
+          :style="`
+              background-color: ${instance.requirements.style_fields['label-color']['background'] || 'white'};
+              font-size: ${instance.requirements.style_fields['font-size']['title'] || 12}px;
+              color: ${instance.requirements.style_fields['label-color']['title'] || '#000000'};
+              border-color: ${instance.requirements.style_fields['label-color']['border'] || 'transparent'}
+          `"
+          class="p-2 shadow-lg border-2 w-fit rounded whitespace-pre-wrap">
       {{instance.requirements.fields[0].defaultValue}}
   </div>
 </template>

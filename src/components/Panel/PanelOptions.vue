@@ -24,7 +24,7 @@
     </div>
   </TabList>
 
-  <TabPanels class="mt-2 bg-transparent">
+  <TabPanels class="mt-2 bg-transparent max-h-[350px] overflow-y-auto scroll-smooth scrollbar-thumb-gray-300 scrollbar-track-gray-100 scrollbar-thin scrollbar-thumb-rounded scrollbar-w-1 bg-red-600">
     <!--<TabPanel class="h-full p-3">-->
     <!--  <div>Prompt API: {}</div>-->
     <!--</TabPanel>-->

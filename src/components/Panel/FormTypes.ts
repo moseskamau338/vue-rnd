@@ -22,6 +22,7 @@ export type visualizer_requirements = {
     data: any[],
     categories: string[],
     chartOptions: any,
+    style_fields: any,
     fields: InputSpecification[]
 }
 export interface FormSchema {

@@ -48,10 +48,10 @@ const addPage = () => {
             </Tab>
           </template>
 
-            <input v-focus autofocus v-if="showAddPageInput" @keyup.enter="addPage" v-model="newPageName" type="text" name="page" id="page" class="focus:ring-green-500 focus:border-green-500 block w-7/12 sm:text-sm border-gray-300 rounded placeholder:text-xs" placeholder="Enter page name...">
+            <input v-focus autofocus v-if="showAddPageInput" @keyup.enter="addPage" v-model="newPageName" type="text" name="page" id="page" class="focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded placeholder:text-xs" placeholder="Enter page name...">
 
 
-            <button v-if="!showAddPageInput" @click="showAddPageInput = true" class="border border-dashed border-slate-300 dark:border-slate-600 w-7/12 py-1.5 text-slate-400 dark:text-slate-700 hover:scale-105 transition-all duration-300 rounded">+ New Page</button>
+            <button v-if="!showAddPageInput" @click="showAddPageInput = true" class="border border-dashed border-slate-300 dark:border-slate-600 py-1.5 text-slate-400 dark:text-slate-700 hover:scale-105 transition-all duration-300 rounded w-full">+ New Page</button>
         </TabList>
 
         <TabPanels class="col-span-10 focus:outline-0 h-screen scrollbar-hide">

@@ -80,7 +80,7 @@
 
 <script>
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import CustomSelect from "../CustomSelect.vue";
 import PanelOptions from "./PanelOptions.vue";
 import Visualizer from "./Visualizer.vue";
@@ -106,6 +106,9 @@ export default {
 
         watch(selectedItem, () => {
             panel_instance.value = new selectedItem.value.itemClass()
+        })
+        onMounted(() => {
+          window.current_instance = panel_instance.value
         })
 
         return {options, selectedItem, panel_instance}

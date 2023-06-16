@@ -19,86 +19,92 @@
 <template>
  <div>
      <div>
-         {{styles.requirements.fields.styles}}
-     </div>
-     <form action="#">
       <!--db inputs-->
           <label for="dataset" class="text-slate-400 text-xs">Colors</label>
-          <div class="mt-2 relative">
-            <label for="color_schemes" class="block text-xs font-medium text-gray-700">Color Schemes</label>
-            <CustomSelect
-                    placeholder="Choose color scheme"
-                    :options="Object.keys(color_schemes)"
-                    v-model="selected_color_scheme">
-                <template #selected-items>
-                    <div class="relative flex justify-between items-center">
-                          <span class="text-[10px] font-medium">{{makeTitle(selected_color_scheme, '_')}}</span>
-                          <div class="flex w-[100px]">
-                              <span v-for="color in color_schemes[selected_color_scheme]"  class="h-3 w-3 shrink-0 grow-0" :style="`background-color: #${color}`"></span>
-                          </div>
-                     </div>
-                </template>
-                    <template #option="{option}">
-                       <div class="relative flex justify-between items-center p-1 cursor-pointer hover:bg-slate-100">
-                            <span class="text-[10px] font-medium">{{makeTitle(option, '_')}}</span>
-                            <div class="flex w-[100px]">
-                                <span v-for="color in color_schemes[option]"  class="h-3 w-3 shrink-0 grow-0" :style="`background-color: #${color}`"></span>
-                            </div>
-                       </div>
+          <div class="mt-2 relative" v-if="styles.requirements.style_fields?.color_scheme">
+              <template  v-if="!styles.requirements.style_fields['single-color']">
+                <label for="color_schemes" class="block text-xs font-medium text-gray-700">Color Schemes</label>
+                <CustomSelect
+                        placeholder="Choose color scheme"
+                        :options="Object.keys(color_schemes)"
+                        v-model="styles.requirements.style_fields['color_scheme']">
+                    <template #selected-items>
+                        <div class="relative flex justify-between items-center">
+                              <span class="text-[10px] font-medium">{{makeTitle(styles.requirements.style_fields['color_scheme'], '_')}}</span>
+                              <div class="flex w-[100px]">
+                                  <span v-for="color in color_schemes[styles.requirements.style_fields['color_scheme']]"  class="h-3 w-3 shrink-0 grow-0" :style="`background-color: ${color}`"></span>
+                              </div>
+                         </div>
                     </template>
-            </CustomSelect>
+                        <template #option="{option}">
+                           <div class="relative flex justify-between items-center p-1 cursor-pointer hover:bg-slate-100">
+                                <span class="text-[10px] font-medium">{{makeTitle(option, '_')}}</span>
+                                <div class="flex w-[100px]">
+                                    <span v-for="color in color_schemes[option]"  class="h-3 w-3 shrink-0 grow-0" :style="`background-color: ${color}`"></span>
+                                </div>
+                           </div>
+                        </template>
+                </CustomSelect>
+              </template>
+              <div v-else class="flex items-center space-x-2 border p-1 rounded mt-2">
+                  <div class="relative h-5 w-5 rounded-full overflow-clip shrink-0 grow-0">
+                      <div :style="`background-color: ${styles.requirements.style_fields['chart-color'] || 'white'}`" class="absolute pointer-events-none inset-0"></div>
+                    <input type="color" v-model="styles.requirements.style_fields['chart-color']" class="cursor-pointer">
+                  </div>
+                  <div>
+                    <input type="text" class="text-xs border-none bg-red-600 w-full bg-transparent p-0 focus:outline-0 focus:border-none focus:ring-0" v-model="styles.requirements.style_fields['chart-color']" />
+                  </div>
+              </div>
+              <small class="text-slate-400 text-[10px]">
+                  Single Chart Color
+              </small>
           </div>
 
-          <div class="mt-4">
-            <label for="field" class="block text-xs font-medium text-gray-700">Label Colors</label>
-            <div class="grid grid-cols-1 gap-2 md:grid-cols-12 mt-2">
-                <div class="col-span-6">
-                    <div class="flex items-center space-x-2 border p-1 rounded">
-                        <div class="relative h-5 w-5 rounded-full overflow-clip shrink-0 grow-0">
-                            <div :style="`background-color: ${label_colors.light || 'white'}`" class="absolute pointer-events-none inset-0"></div>
-                          <input type="color" v-model="label_colors.light" class="cursor-pointer">
-                        </div>
-                        <div>
-                          <input type="text" class="text-xs border-none bg-red-600 w-full bg-transparent p-0 focus:outline-0 focus:border-none focus:ring-0" v-model="label_colors.light" />
-                        </div>
-                    </div>
-                    <small class="text-slate-400 text-[10px]">Light mode</small>
-                </div>
-                <div class="col-span-6">
-                    <div class="flex items-center space-x-2 border p-1 rounded">
-                        <div class="relative h-5 w-5 rounded-full overflow-clip shrink-0 grow-0">
-                              <div :style="`background-color: ${label_colors.dark || 'white'}`" class="absolute pointer-events-none inset-0 z-10"></div>
-                          <input type="color" v-model="label_colors.dark" class="cursor-pointer">
-                        </div>
-                        <div>
-                          <input type="text" class="text-xs border-none bg-red-600 w-full bg-transparent p-0 focus:outline-0 focus:border-none focus:ring-0" v-model="label_colors.dark" />
-                        </div>
-                    </div>
-                    <small class="text-slate-400 text-[10px]">Dark mode</small>
-                </div>
+         <template v-if="styles.requirements.style_fields['label-color']">
+            <div class="mt-4">
+              <label for="field" class="block text-xs font-medium text-gray-700">Label Colors</label>
+              <div class="grid grid-cols-1 gap-2 md:grid-cols-12 mt-2">
+                  <div class="col-span-6" v-for="colorSetting in Object.keys(styles.requirements.style_fields['label-color'])">
+                      <div class="flex items-center space-x-2 border p-1 rounded">
+                          <div class="relative h-5 w-5 rounded-full overflow-clip shrink-0 grow-0">
+                              <div :style="`background-color: ${styles.requirements.style_fields['label-color'][colorSetting] || 'white'}`" class="absolute pointer-events-none inset-0"></div>
+                            <input type="color" v-model="styles.requirements.style_fields['label-color'][colorSetting]" class="cursor-pointer">
+                          </div>
+                          <div>
+                            <input type="text" class="text-xs border-none bg-red-600 w-full bg-transparent p-0 focus:outline-0 focus:border-none focus:ring-0" v-model="styles.requirements.style_fields['label-color'][colorSetting]" />
+                          </div>
+                      </div>
+                      <small class="text-slate-400 text-[10px]">
+                          {{ `${colorSetting.toLowerCase().charAt(0).toUpperCase() + colorSetting.slice(1)} Color` }}
+                      </small>
+                  </div>
+
+              </div>
             </div>
-          </div>
+         </template>
 
-         <label for="dataset" class="text-slate-400 text-xs mt-4">Sizes</label>
-         <div>
+         <label v-if="styles.requirements.style_fields['font-size']" for="dataset" class="text-slate-400 text-xs mt-4">Sizes</label>
+         <div v-for="sizeKey in Object.keys(styles.requirements.style_fields['font-size'])">
              <div class="mt-2 w-[250px]">
-                <label for="color_schemes" class="block text-xs font-medium text-gray-700">Label Font Size</label>
+                <label for="color_schemes" class="block text-xs font-medium text-gray-700">
+                    {{ sizeKey.toLowerCase().charAt(0).toUpperCase() + sizeKey.slice(1) }}
+                    Font Size</label>
                  <div class="flex items-center space-x-2">
-                     <input type="range" min="5" max="300" class="w-full">
-                     <input type="number" min="5" max="300" class="w-20 p-1 text-[9px] rounded border-slate-300 leading-none focus:ring-green-500 focus:border-green-500" placeholder="5">
+                     <input v-model="styles.requirements.style_fields['font-size'][sizeKey]" type="range" min="5" max="300" class="w-full">
+                     <input v-model="styles.requirements.style_fields['font-size'][sizeKey]" type="number" min="5" max="300" class="w-20 p-1 text-[9px] rounded border-slate-300 leading-none focus:ring-green-500 focus:border-green-500" placeholder="5">
                  </div>
              </div>
 
-             <div class="mt-2 w-[250px]">
-                <label for="color_schemes" class="block text-xs font-medium text-gray-700">Pie Chart Radius</label>
-                 <div class="flex items-center space-x-2">
-                     <input type="range" min="5" max="300" class="w-full">
-                     <input type="number" min="5" max="300" class="w-20 p-1 text-[9px] rounded border-slate-300 leading-none focus:ring-green-500 focus:border-green-500" placeholder="5">
-                 </div>
-             </div>
+             <!--<div class="mt-2 w-[250px]">-->
+             <!--   <label for="color_schemes" class="block text-xs font-medium text-gray-700">Pie Chart Radius</label>-->
+             <!--    <div class="flex items-center space-x-2">-->
+             <!--        <input type="range" min="5" max="300" class="w-full">-->
+             <!--        <input type="number" min="5" max="300" class="w-20 p-1 text-[9px] rounded border-slate-300 leading-none focus:ring-green-500 focus:border-green-500" placeholder="5">-->
+             <!--    </div>-->
+             <!--</div>-->
          </div>
       <!--others-->
-      </form>
+      </div>
  </div>
 </template>
 

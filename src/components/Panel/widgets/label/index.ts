@@ -7,9 +7,22 @@ const default_requirements: visualizer_requirements = {
     data: [],
     categories: [],
     chartOptions: {},
+    style_fields:{
+        "single-color": false,
+        'chart-color' : '#34456E',
+        color_scheme: false,
+        'label-color':{
+            title:'#34456E',
+            background:'#ffffff',
+            border:'#ececec'
+        },
+        'font-size': {
+            title: 12,
+        },
+    },
     fields: [
         {
-          elementType: 'input',
+          elementType: 'textarea',
           label: 'Label',
           name: 'label',
           type: 'text',
