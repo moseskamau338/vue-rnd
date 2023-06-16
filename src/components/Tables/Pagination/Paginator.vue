@@ -81,24 +81,24 @@ export default {
 </script>
 <template>
   <div class="flex gap-3 justify-between m-3 items-center flex-wrap">
-    <p class="text-xs">Page <b>{{ instance.getState().pagination.pageIndex + 1 }} of {{ instance.getPageCount() }}</b> <span><small>({{ totalRecords }} total records)</small></span></p>
+    <p class="text-xs text-slate-500 dark:text-slate-400">Page <b>{{ instance.getState().pagination.pageIndex + 1 }} of {{ instance.getPageCount() }}</b> <span><small>({{ totalRecords }} total records)</small></span></p>
     <div class="flex justify-between items-center gap-2 flex-wrap">
-      <select v-model="pageSize" @change="handlePageSizeChange" class="rounded leading-none border-gray-300 text-xs focus:outline-none focus:ring-green-500 focus:border-green-500 mr-3 py-1.5 dark:bg-brand-night dark:border-gray-500">
+      <select v-model="pageSize" @change="handlePageSizeChange" class="rounded leading-none border-slate-300 text-xs focus:outline-none focus:ring-green-500 focus:border-green-500 mr-3 py-1.5 dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100">
         <option value="">---Page Size---</option>
         <option v-for="(item, idx) in pageSizeOptions" :key="idx" :value="item">{{ item}}</option>
       </select>
       <div class="flex flex-wrap">
-        <button class="capitalize relative inline-flex items-center px-2 py-1.5 rounded-l-md border border-gray-300 bg-white dark:bg-brand-night dark:border-gray-500 text-xs font-medium text-gray-500 hover:bg-gray-50" @click="instance.previousPage()" :disabled="!instance.getCanPreviousPage()">prev</button>
+        <button class="capitalize relative inline-flex items-center px-2 py-1.5 rounded-l-md border border-slate-300 bg-white dark:bg-brand-night dark:border-slate-500 text-xs font-medium text-slate-500 hover:bg-slate-50" @click="instance.previousPage()" :disabled="!instance.getCanPreviousPage()">prev</button>
       <button  v-for="item in pages"
         :key="item"
         :disabled="(instance.getState().pagination.pageIndex + 1) === item || item === '...'"
         @click="handleSelectPage(item)"
         :class="[
-            (instance.getState().pagination.pageIndex + 1) === item ? 'z-10 bg-green-50 dark:bg-green-500 dark:text-white border-green-500 text-green-600' : 'bg-white border-gray-300 dark:bg-brand-night dark:border-gray-500 dark:text-gray-300 text-gray-500 hover:bg-gray-50'
+            (instance.getState().pagination.pageIndex + 1) === item ? 'z-10 bg-green-50 dark:bg-green-500 dark:text-white border-green-500 text-green-600' : 'bg-white border-slate-300 dark:bg-brand-night dark:border-slate-500 dark:text-slate-300 text-slate-500 hover:bg-slate-50'
         ]"
         aria-current="page"
         class="relative transition-all inline-flex items-center px-4 border text-xs py-1.5 font-medium">  {{ item }} </button>
-          <button class="capitalize relative inline-flex items-center px-2 py-1.5 rounded-r-md border border-gray-300 bg-white dark:bg-brand-night dark:border-gray-500 text-xs font-medium text-gray-500 hover:bg-gray-50" @click="instance.nextPage()" :disabled="!instance.getCanNextPage()">next</button>
+          <button class="capitalize relative inline-flex items-center px-2 py-1.5 rounded-r-md border border-slate-300 bg-white dark:bg-brand-night dark:border-slate-500 text-xs font-medium text-slate-500 hover:bg-slate-50" @click="instance.nextPage()" :disabled="!instance.getCanNextPage()">next</button>
       </div>
     </div>
   </div>

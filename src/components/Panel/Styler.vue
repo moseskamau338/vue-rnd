@@ -46,7 +46,7 @@
                         </template>
                 </CustomSelect>
               </template>
-              <div v-else class="flex items-center space-x-2 border p-1 rounded mt-2">
+              <div v-else class="flex items-center space-x-2 border p-1 rounded mt-2 dark:border-slate-500 dark:text-slate-100">
                   <div class="relative h-5 w-5 rounded-full overflow-clip shrink-0 grow-0">
                       <div :style="`background-color: ${styles.requirements.style_fields['chart-color'] || 'white'}`" class="absolute pointer-events-none inset-0"></div>
                     <input type="color" v-model="styles.requirements.style_fields['chart-color']" class="cursor-pointer">
@@ -62,10 +62,10 @@
 
          <template v-if="styles.requirements.style_fields['label-color']">
             <div class="mt-4">
-              <label for="field" class="block text-xs font-medium text-gray-700">Label Colors</label>
+              <label for="field" class="block text-xs font-medium text-gray-700 dark:text-slate-300">Label Colors</label>
               <div class="grid grid-cols-1 gap-2 md:grid-cols-12 mt-2">
                   <div class="col-span-6" v-for="colorSetting in Object.keys(styles.requirements.style_fields['label-color'])">
-                      <div class="flex items-center space-x-2 border p-1 rounded">
+                      <div class="flex items-center space-x-2 border p-1 rounded dark:border-slate-500 dark:text-slate-100">
                           <div class="relative h-5 w-5 rounded-full overflow-clip shrink-0 grow-0">
                               <div :style="`background-color: ${styles.requirements.style_fields['label-color'][colorSetting] || 'white'}`" class="absolute pointer-events-none inset-0"></div>
                             <input type="color" v-model="styles.requirements.style_fields['label-color'][colorSetting]" class="cursor-pointer">
@@ -83,25 +83,27 @@
             </div>
          </template>
 
-         <label v-if="styles.requirements.style_fields['font-size']" for="dataset" class="text-slate-400 text-xs mt-4">Sizes</label>
-         <div v-for="sizeKey in Object.keys(styles.requirements.style_fields['font-size'])">
-             <div class="mt-2 w-[250px]">
-                <label for="color_schemes" class="block text-xs font-medium text-gray-700">
-                    {{ sizeKey.toLowerCase().charAt(0).toUpperCase() + sizeKey.slice(1) }}
-                    Font Size</label>
-                 <div class="flex items-center space-x-2">
-                     <input v-model="styles.requirements.style_fields['font-size'][sizeKey]" type="range" min="5" max="300" class="w-full">
-                     <input v-model="styles.requirements.style_fields['font-size'][sizeKey]" type="number" min="5" max="300" class="w-20 p-1 text-[9px] rounded border-slate-300 leading-none focus:ring-green-500 focus:border-green-500" placeholder="5">
-                 </div>
-             </div>
+         <div v-if="styles.requirements.style_fields['font-size']" for="dataset" class="text-slate-400 dark:text-slate-500 text-xs mt-4">Sizes</div>
 
-             <!--<div class="mt-2 w-[250px]">-->
-             <!--   <label for="color_schemes" class="block text-xs font-medium text-gray-700">Pie Chart Radius</label>-->
-             <!--    <div class="flex items-center space-x-2">-->
-             <!--        <input type="range" min="5" max="300" class="w-full">-->
-             <!--        <input type="number" min="5" max="300" class="w-20 p-1 text-[9px] rounded border-slate-300 leading-none focus:ring-green-500 focus:border-green-500" placeholder="5">-->
-             <!--    </div>-->
-             <!--</div>-->
+         <div class="grid grid-cols-1 gap-2 md:grid-cols-12">
+           <div class="col-span-6" v-for="sizeKey in Object.keys(styles.requirements.style_fields['font-size'])">
+               <div class="mt-2 w-full">
+                  <label for="color_schemes" class="block text-xs font-medium text-gray-700 dark:text-slate-300">
+                      {{ sizeKey.toLowerCase().charAt(0).toUpperCase() + sizeKey.slice(1) }}
+                      Font Size</label>
+                   <div class="flex items-center space-x-2">
+                       <input v-model="styles.requirements.style_fields['font-size'][sizeKey]" type="number" min="5" max="300" class="w-full text-[9px] standard-input" placeholder="5">
+                   </div>
+               </div>
+
+               <!--<div class="mt-2 w-[250px]">-->
+               <!--   <label for="color_schemes" class="block text-xs font-medium text-gray-700">Pie Chart Radius</label>-->
+               <!--    <div class="flex items-center space-x-2">-->
+               <!--        <input type="range" min="5" max="300" class="w-full">-->
+               <!--        <input type="number" min="5" max="300" class="w-20 p-1 text-[9px] rounded border-slate-300 leading-none focus:ring-green-500 focus:border-green-500" placeholder="5">-->
+               <!--    </div>-->
+               <!--</div>-->
+           </div>
          </div>
       <!--others-->
       </div>
@@ -109,6 +111,9 @@
 </template>
 
 <style scoped>
+.standard-input{
+    @apply mt-1 block w-full pl-3 py-2 border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 text-xs rounded dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100
+}
 /*Chrome*/
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     input[type='range'] {

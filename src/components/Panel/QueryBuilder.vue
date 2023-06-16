@@ -11,29 +11,29 @@ const props = defineProps({
       <div>
           <div v-if="queryOptions.requirements.backend_query">
               <!--db inputs-->
-              <p class="text-slate-400 text-xs">Dataset</p>
+              <p class="text-slate-400 dark:text-slate-500 text-xs">Dataset</p>
               <div class="mt-2">
-                <label for="collection" class="block text-xs font-medium text-gray-700">Collection</label>
-                <select id="collection" name="collection" class="mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 text-xs rounded-md">
+                <label for="collection" class="block text-xs font-medium text-gray-700 dark:text-slate-300">Collection</label>
+                <select id="collection" name="collection" class="standard-input">
                   <option :value="null">--- Choose Collection ---</option>
                   <option value="transactions">Transactions</option>
                   <option value="accounts">Accounts</option>
                 </select>
               </div>
 
-              <div class="border p-1 rounded mt-2">
+              <div class="border dark:border-slate-600 p-2 rounded mt-2">
                   <div class="mt-2">
-                    <label for="field" class="block text-xs font-medium text-gray-700">Aggregation / Function</label>
-                    <select id="field" name="field" class="mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 text-xs rounded-md">
+                    <label for="field" class="block text-xs font-medium text-gray-700 dark:text-slate-300">Aggregation / Function</label>
+                    <select id="field" name="field" class="standard-input">
                       <option :value="null">--- Choose Function ---</option>
                       <option value="sum">Sum</option>
                       <option value="aggregate">Aggregate</option>
                     </select>
                   </div>
 
-                  <div class="mt-2">
-                    <label for="field" class="block text-xs font-medium text-gray-700">Target Field</label>
-                    <select disabled id="field" name="field" class="mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 text-xs rounded-md">
+                  <div class="mt-4">
+                    <label for="field" class="block text-xs font-medium text-gray-700 dark:text-slate-300">Target Field</label>
+                    <select disabled id="field" name="field" class="standard-input">
                       <option :value="null">--- Field ---</option>
                       <option value="transactions">Transactions</option>
                       <option value="accounts">Accounts</option>
@@ -42,15 +42,15 @@ const props = defineProps({
               </div>
 
               <div class="mt-4">
-                <label for="field" class="block text-xs font-medium text-gray-700">Filters</label>
-                <select disabled id="field" name="field" class="mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 text-xs rounded-md">
+                <label for="field" class="block text-xs font-medium text-gray-700 dark:text-slate-300">Filters</label>
+                <select disabled id="field" name="field" class="standard-input">
                   <option :value="null">--- Field ---</option>
                   <option value="transactions">Transactions</option>
                   <option value="accounts">Accounts</option>
                 </select>
               </div>
           </div>
-          <p v-if="queryOptions.requirements.fields" class="text-slate-400 text-xs mt-4">Chart Appearance</p>
+          <p v-if="queryOptions.requirements.fields" class="text-slate-400 dark:text-slate-500 text-xs mt-4">Chart Appearance</p>
           <!--@Todo: loop through custom fields and create form-->
           <FormGenerator :elements="queryOptions.requirements.fields"/>
           <!--<div v-if="queryOptions.requirements.backend_query" class="grid grid-cols-1 md:grid-cols-4 gap-y-2 mt-2">-->
@@ -68,5 +68,7 @@ const props = defineProps({
 </template>
 
 <style scoped>
-
+.standard-input{
+    @apply mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 text-xs rounded dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100
+}
 </style>

@@ -35,20 +35,20 @@ const addPage = () => {
     <TabGroup as="section" class="grid gap-10 grid-cols-1 lg:grid-cols-12 mt-8" vertical>
         <TabList as="div" class="col-span-2 flex flex-col text-sm space-y-2 focus:outline-0">
           <template v-for="item in pages">
-            <span v-if="item.type === 'header'" class="font-bold text-slate-400 pt-1">{{ item.name }}</span>
+            <span v-if="item.type === 'header'" class="font-bold text-slate-400 pl-2 pb-2">{{ item.name }}</span>
             <Tab :disabled="item.disabled" v-slot="{ selected }" v-else-if="item.type === 'menu'" class="focus:outline-0 w-full">
               <button :class="[
-                  selected ? 'bg-white shadow' : '',
+                  selected ? 'bg-white dark:bg-brand-night-box shadow' : '',
                   item.disabled ? 'opacity-70 pointer-events-none' : ''
                 ]"
-                 class="rounded text-left px-2 py-1.5 focus:border-none focus:ring-0 hover:bg-white w-full text-slate-500 focus:outline-0 transition-all duration-500 whitespace-nowrap truncate">
+                 class="rounded text-left pr-2 py-1.5 focus:border-none focus:ring-0 dark:hover:bg-slate-700/50 hover:bg-white w-full text-slate-500 focus:outline-0 transition-all duration-500 whitespace-nowrap truncate">
                 <i class="fas mr-2" :class="item.icon"></i>
                   {{ item.name }}
               </button>
             </Tab>
           </template>
 
-            <input v-focus autofocus v-if="showAddPageInput" @keyup.enter="addPage" v-model="newPageName" type="text" name="page" id="page" class="focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded placeholder:text-xs" placeholder="Enter page name...">
+            <input v-focus autofocus v-if="showAddPageInput" @keyup.enter="addPage" v-model="newPageName" type="text" name="page" id="page" class="focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100 rounded placeholder:text-xs" placeholder="Enter page name...">
 
 
             <button v-if="!showAddPageInput" @click="showAddPageInput = true" class="border border-dashed border-slate-300 dark:border-slate-600 py-1.5 text-slate-400 dark:text-slate-700 hover:scale-105 transition-all duration-300 rounded w-full">+ New Page</button>

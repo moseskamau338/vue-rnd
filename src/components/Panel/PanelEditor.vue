@@ -13,7 +13,7 @@
                </template>
                 <template #option="{option, status}">
                     <div :class="[
-                                status.active ? 'bg-gray-200' : ''
+                                status.active ? 'bg-gray-200 dark:bg-slate-700' : ''
                             ]" class="flex justify-between items-center py-3 px-2 cursor-pointer transition-all duration-300">
                         <div class="flex space-x-2">
                             <div class="h-5 w-5 flex justify-center items-center shrink-0 grow-0 rounded-full border border-green-400 shadow overflow-clip">
@@ -36,7 +36,7 @@
            <TabGroup >
                <div class="flex justify-end pr-10">
                   <TabList class="flex flex-col lg:flex-row lg:justify-between space-y-4 lg:space-y-reverse items-center mt-3">
-                    <div class="flex p-1 space-x-1 dark:bg-brand-dark bg-gray-200 rounded-lg max-w-fit">
+                    <div class="flex p-1 space-x-1 dark:bg-brand-night bg-gray-200 rounded-lg max-w-fit">
 
                         <!--Add Analytics-->
                         <Tab
@@ -49,8 +49,8 @@
                               'w-fit px-4 py-1 text-xs font-medium rounded',
                               'focus:outline-none focus:ring-0 ring-opacity-60 transition-all duration-800 ease-out',
                               selected
-                                ? 'bg-white text-slate-600 dark:text-slate-700 shadow'
-                                : 'text-slate-800 dark:text-gray-600',
+                                ? 'bg-white dark:bg-brand-night-box text-slate-600 dark:text-slate-300 shadow'
+                                : 'text-slate-800 dark:text-slate-600',
                             ]"
                           >
                             {{ category }}

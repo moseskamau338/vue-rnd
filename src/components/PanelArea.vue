@@ -144,16 +144,16 @@ onMounted(() => {
         <div></div>
         <div class="space-x-5 flex items-center transition-all duration-300">
             <div class="flex items-center flex-row">
-                <input type="date" class="focus:ring-green-500 focus:border-green-500 block sm:text-xs border-gray-300 rounded placeholder:text-xs" placeholder="Enter page name...">
+                <input type="date" class="focus:ring-green-500 focus:border-green-500 block sm:text-xs border-gray-300 rounded placeholder:text-xs dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100" placeholder="Enter page name...">
                 <span class="text-slate-400 text-xs px-3">to</span>
-                <input type="date" class="focus:ring-green-500 focus:border-green-500 block sm:text-xs border-gray-300 rounded placeholder:text-xs" placeholder="Enter page name...">
+                <input type="date" class="focus:ring-green-500 focus:border-green-500 block sm:text-xs border-gray-300 rounded placeholder:text-xs dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100" placeholder="Enter page name...">
             </div>
             <Menu as="div" className="relative flex">
               <!--inline-block text-left-->
-                <button @click="show_panel_wizard = !show_panel_wizard" class="border border-gray-300 w-full justify-center rounded-l px-4 py-1.5 text-xs font-medium focus:outline-none hover:bg-slate-200 transition-all duration-300">+ Add Panel</button>
+                <button @click="show_panel_wizard = !show_panel_wizard" class="border border-gray-300 w-full justify-center rounded-l px-4 py-1.5 text-xs font-medium focus:outline-none hover:bg-slate-200 transition-all duration-300 dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100">+ Add Panel</button>
               <div>
                 <MenuButton
-                  class="border border-l-0 border-gray-300 inline-flex w-full justify-center rounded-r px-2 py-1.5 text-sm font-medium focus:outline-none"
+                  class="border border-l-0 border-gray-300 inline-flex w-full justify-center rounded-r px-2 py-1.5 text-sm font-medium focus:outline-none dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -171,7 +171,7 @@ onMounted(() => {
                 leave-to-class="transform scale-95 opacity-0"
               >
                 <MenuItems
-                  class="absolute right-0 mt-8 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  class="absolute right-0 mt-8 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white dark:bg-brand-night-box dark:text-slate-200 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                 >
                   <div class="px-1 py-1">
                       <template v-for="item in dashboard_options">
@@ -179,7 +179,7 @@ onMounted(() => {
                           <button
                             @click="item.action"
                             :class="[
-                              active ? 'bg-gray-300/30' : '',
+                              active ? 'bg-gray-300/30 dark:bg-slate-700' : '',
                               'group flex w-full items-center rounded px-2 py-2 text-xs',
                             ]"
                           >
@@ -198,7 +198,7 @@ onMounted(() => {
             </div>
         </div>
     </header>
-  <div :class="{'graph-paper border' : is_editing}"
+  <div :class="{'graph-paper border dark:border-slate-700' : is_editing}"
        class="min-h-[700px] w-full mt-8 transition-all duration-300 relative">
         <div class="py-2 px-2.5 flex justify-end space-x-2">
           <CButton variant="secondary" v-if="is_editing" @click="addWidget">Add Widget</CButton>

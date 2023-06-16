@@ -59,7 +59,7 @@ export class ThemeGenerator{
                 case 'danger' :return 'border border-transparent text-white bg-red-500 hover:bg-red-600 focus:ring-red-500';
                 case 'warning' : return 'border border-transparent text-white bg-orange-400 hover:bg-orange-500 focus:ring-orange-400';
                 case 'dark' : return 'border border-transparent text-white bg-brand-dark hover:bg-brand-dark/90 focus:ring-brand-dark';
-                case 'secondary' : return 'bg-transparent hover:bg-gray-100 dark:hover:bg-brand-night focus:ring-gray-400 border border-gray-500';
+                case 'secondary' : return 'bg-transparent hover:bg-gray-100 dark:hover:bg-slate-800 dark:bg-brand-night dark:text-slate-300 focus:ring-gray-400 border border-gray-500 dark:border-gray-700';
                 default: return 'border border-transparent text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500';
             }
 
