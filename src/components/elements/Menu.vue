@@ -9,7 +9,6 @@ defineProps({
 <template>
 <Menu as="div" className="relative flex">
   <slot name="extended"></slot>
-  <div>
     <MenuButton>
         <slot name="button">
             <div class="border border-l-0 border-gray-300 inline-flex w-full justify-center rounded-r px-2 py-1.5 text-sm font-medium focus:outline-none">
@@ -19,8 +18,6 @@ defineProps({
             </div>
         </slot>
     </MenuButton>
-  </div>
-
   <transition
     enter-active-class="transition duration-100 ease-out"
     enter-from-class="transform scale-95 opacity-0"
@@ -30,7 +27,7 @@ defineProps({
     leave-to-class="transform scale-95 opacity-0"
   >
     <MenuItems
-      class="absolute right-0 mt-8 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="absolute right-0 mt-8 w-56 origin-top-right divide-y divide-gray-100 rounded border border-transparent bg-white dark:border-slate-600 dark:bg-brand-night-box shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     >
       <div class="px-1 py-1 z-50 relative">
           <slot name="list">
@@ -39,7 +36,7 @@ defineProps({
                 <button
                   @click="item.action"
                   :class="[
-                    active ? 'bg-gray-300/30' : '',
+                    active ? 'bg-slate-300/30 dark:bg-slate-700' : '',
                     item.classes,
                     'group flex w-full items-center rounded px-2 py-2 text-xs',
                   ]"

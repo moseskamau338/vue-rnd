@@ -29,7 +29,7 @@
                 </button>
                   <Menu :options="[
                       {label:'Hello', action: () => {}, classes:''},
-                      {label:'Delete', action: deleteWidget, classes:'bg-red-100 text-red-700'},
+                      {label:'Delete', action: deleteWidget, classes:'bg-red-100 dark:hover:bg-red-100/40 text-red-700 dark:hover:text-red-200 transition-all duration-300'},
                   ]">
                       <template #button>
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
