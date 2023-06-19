@@ -6,134 +6,26 @@ import GridStackWidget from "@/components/GridStackWidget.vue";
 import { GridStack } from "gridstack";
 import "gridstack/dist/gridstack.min.css";
 import "gridstack/dist/gridstack-extra.min.css";
-import {nextTick, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
+import {usePanelStore} from '@/stores/panels'
+import Empty from "@/components/elements/Empty.vue";
 
 defineProps({
     page: {type: Object, required: true},
 })
 
+const panelStore = usePanelStore()
+
 const dashboard_options = ref([
-    {label: 'Edit Page', key:'', action: toggleEdit},
+    {label: 'Edit Page', key:'', action: panelStore.toggleEdit},
     {label: 'Update Variables', key:'', action:() => {}},
     {label: 'Delete Page', key:'', action:() => {}},
 ])
-const is_editing = ref(false)
+
 const is_mounted = ref(false)
-const show_panel_wizard = ref(false)
-const grid = ref(null);
-const widgets = ref([
-  {
-    id: 1,
-    title: "Widget 1",
-    grid: {
-      x: 0,
-      y: 0,
-      w: 2,
-      h: 2,
-    },
-  },
-  {
-    id: 2,
-    title: "Widget 2",
-    grid: {
-      x: 2,
-      y: 0,
-      w: 2,
-      h: 1,
-    },
-  },
-  {
-    id: 3,
-    title: "Widget 3",
-    grid: {
-      x: 0,
-      y: 2,
-      w: 2,
-      h: 1,
-    },
-  },
-  {
-    id: 4,
-    title: "Widget 4",
-    grid: {
-      x: 2,
-      y: 2,
-      w: 3,
-      h: 2,
-    },
-  },
-  {
-    id: 5,
-    title: "Widget 5",
-    grid: {
-      x: 3,
-      y: 2,
-      w: 2,
-      h: 2,
-    },
-  },
-]);
-
-function initGridStack() {
-  grid.value = GridStack.init({
-    column: 6,
-    cellHeight: 100,
-    margin: 8,
-    disableResize: !is_editing.value,
-    disableDrag: !is_editing.value,
-  });
-  makeWidgets(widgets.value);
-}
-
-function makeWidgets(widgets) {
-  widgets.forEach((widget) => {
-    makeWidget(widget);
-  });
-}
-function makeWidget(item) {
-  const elSelector = `#${item.id}`;
-  return grid.value.makeWidget(elSelector);
-}
-
-async function addWidget() {
-  const widgetCount = widgets.value.length + 1;
-  const widget = {
-    id: widgetCount,
-    title: `Widget ${widgetCount}`,
-    grid: {
-      w: 2,
-      h: 1,
-    },
-  };
-  widgets.value.push(widget);
-  await nextTick();
-  console.log('Adding widget...', widget)
-  makeWidget(widget);
-}
-
-function deleteWidget(widget) {
-  const index = widgets.value.findIndex((w) => w.id === widget.id);
-  if (index === -1) {
-    return;
-  }
-  const selector = `#${CSS.escape(widget.id)}`;
-  grid.value.removeWidget(selector);
-  grid.value.compact();
-  widgets.value.splice(index, 1);
-}
-
-
-function toggleEdit() {
-  if (is_editing.value) {
-    grid.value.disable();
-  } else {
-    grid.value.enable();
-  }
-  is_editing.value = !is_editing.value;
-}
 
 onMounted(() => {
-  initGridStack();
+  panelStore.initGridStack(GridStack);
   is_mounted.value = true
 });
 
@@ -151,7 +43,7 @@ onMounted(() => {
             </div>
             <Menu as="div" className="relative flex">
               <!--inline-block text-left-->
-                <button @click="show_panel_wizard = !show_panel_wizard" class="border border-gray-300 w-full justify-center rounded-l px-4 py-1.5 text-xs font-medium focus:outline-none hover:bg-slate-200 transition-all duration-300 dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100">+ Add Panel</button>
+                <button @click="panelStore.show_panel_wizard = !panelStore.show_panel_wizard" class="border border-gray-300 w-full justify-center rounded-l px-4 py-1.5 text-xs font-medium focus:outline-none hover:bg-slate-200 transition-all duration-300 dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100">+ Add Panel</button>
               <div>
                 <MenuButton
                   class="border border-l-0 border-gray-300 inline-flex w-full justify-center rounded-r px-2 py-1.5 text-sm font-medium focus:outline-none dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100"
@@ -193,31 +85,48 @@ onMounted(() => {
               </transition>
             </Menu>
 
-            <div v-if="is_editing" class="flex space-x-2 transition-all duration-500">
-                <CButton @click="toggleEdit" variant="success">Save</CButton>
-                <CButton @click="toggleEdit" variant="secondary">Cancel</CButton>
+            <div v-if="panelStore.is_editing" class="flex space-x-2 transition-all duration-500">
+                <CButton @click="panelStore.toggleEdit" variant="success">Save</CButton>
+                <CButton @click="panelStore.toggleEdit" variant="secondary">Cancel</CButton>
             </div>
        </div>
 
    </teleport>
-  <div :class="{'graph-paper border dark:border-slate-700' : is_editing}"
+  <div :class="{'graph-paper border dark:border-slate-700' : panelStore.is_editing}"
        class="min-h-[700px] w-full mt-8 transition-all duration-300 relative">
         <div class="py-2 px-2.5 flex justify-end space-x-2">
-          <CButton variant="secondary" v-if="is_editing" @click="addWidget">Add Widget</CButton>
+          <CButton variant="secondary" v-if="panelStore.is_editing" @click="panelStore.addWidget">Add Widget</CButton>
         </div>
         <div class="grid-stack">
-          <GridStackWidget
-            v-for="widget in widgets"
-            :key="widget.id"
-            :data="widget"
-            :is-editing="is_editing"
-            @delete="deleteWidget"
-          />
+            <template v-if="panelStore.activePage.widgets.length > 0">
+                <GridStackWidget
+                  v-for="widget in panelStore.activePage.widgets"
+                  :key="widget.id"
+                  :data="widget"
+                  :is-editing="panelStore.is_editing"
+                  @delete="panelStore.deleteWidget"
+                />
+            </template>
+            <template v-else>
+                <Empty title="No panels available">
+                    <template #description>
+                        <div class="text-center text-xs w-[400px] mt-2">
+                            <p class="text-slate-400">
+                                Panels are analytics widgets that you create for the purpose of visualizing different pieces of your data.
+                            </p>
+                            <CButton
+                                @click="panelStore.show_panel_wizard = !panelStore.show_panel_wizard"
+                                variant="secondary"
+                                class="mt-4">+ Add Panel</CButton>
+                        </div>
+                    </template>
+                </Empty>
+            </template>
         </div>
 
   </div>
 
-  <PanelWorkshop :open="show_panel_wizard" @close="show_panel_wizard = false"/>
+  <PanelWorkshop :open="panelStore.show_panel_wizard" @close="panelStore.show_panel_wizard = false"/>
 
 </template>
 

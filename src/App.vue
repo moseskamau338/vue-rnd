@@ -1,33 +1,15 @@
 <script setup>
 import {TabGroup, TabList, TabPanels, TabPanel, Tab} from "@headlessui/vue";
-import {ref} from "vue";
+import {usePanelStore} from "@/stores/panels.js";
 import PanelArea from "./components/PanelArea.vue";
 import CButton from "@/components/elements/CButton.vue";
 
- const pages = ref([
-      {type:'header', name:'Pages'},
-      {type:'menu', name:'Accounts Metrics', disabled: false},
-      {type:'menu', name:'Transactions Overview',disabled: false},
-    ])
+const panelStore = usePanelStore()
 
-const newPageName = ref('')
-
-
-const showAddPageInput = ref(false)
-const showing_sidebar = ref(true)
+panelStore.activePage = panelStore.pages[1]
 
 const vFocus = {
   mounted: (el) => el.focus()
-}
-
-const addPage = () => {
-     if(newPageName.value.length <= 0) return;
-
-     pages.value.push(
-         {type:'menu', name: newPageName.value, disabled: false},
-     )
-    newPageName.value = ''
-    showAddPageInput.value = false
 }
 
 </script>
@@ -36,12 +18,12 @@ const addPage = () => {
 <section class="mx-20 py-4 h-screen transition-all duration-300">
     <TabGroup as="section" class="grid gap-10 grid-cols-1 lg:grid-cols-12 mt-8" vertical>
         <TabList as="div" :class="[
-            showing_sidebar ? 'col-span-2 flex flex-col' : 'hidden'
+            panelStore.showing_sidebar ? 'col-span-2 flex flex-col' : 'hidden'
         ]" class="col-span-2 text-sm space-y-2 focus:outline-0 transition-all duration-300">
-          <template v-for="item in pages">
+          <template v-for="item in panelStore.pages">
             <span v-if="item.type === 'header'" class="font-bold text-slate-400 pl-2 pb-2">{{ item.name }}</span>
             <Tab :disabled="item.disabled" v-slot="{ selected }" v-else-if="item.type === 'menu'" class="focus:outline-0 w-full">
-              <button :class="[
+              <button @click="panelStore.activePage = item" :class="[
                   selected ? 'bg-white dark:bg-brand-night-box shadow' : '',
                   item.disabled ? 'opacity-70 pointer-events-none' : ''
                 ]"
@@ -52,18 +34,18 @@ const addPage = () => {
             </Tab>
           </template>
 
-            <input v-focus autofocus v-if="showAddPageInput" @keyup.esc="showAddPageInput = false" @keyup.enter="addPage" v-model="newPageName" type="text" name="page" id="page" class="focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100 rounded placeholder:text-xs" placeholder="Enter page name...">
+            <input v-focus autofocus v-if="panelStore.showAddPageInput" @keyup.esc="panelStore.showAddPageInput = false" @keyup.enter="panelStore.addPage" v-model="panelStore.newPageName" type="text" name="page" id="page" class="focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100 rounded placeholder:text-xs" placeholder="Enter page name...">
 
 
-            <button v-if="!showAddPageInput" @click="showAddPageInput = true" class="border border-dashed border-slate-300 dark:border-slate-600 py-1.5 text-slate-400 dark:text-slate-700 hover:scale-105 transition-all duration-300 rounded w-full">+ New Page</button>
+            <button v-if="!panelStore.showAddPageInput" @click="panelStore.showAddPageInput = true" class="border border-dashed border-slate-300 dark:border-slate-600 py-1.5 text-slate-400 dark:text-slate-700 hover:scale-105 transition-all duration-300 rounded w-full">+ New Page</button>
         </TabList>
         <TabPanels :class="[
-            showing_sidebar ? 'col-span-10' : 'col-span-12'
+            panelStore.showing_sidebar ? 'col-span-10' : 'col-span-12'
         ]" class="focus:outline-0 h-screen scrollbar-hide transition-all duration-300">
              <header class="flex justify-between relative z-10">
                 <div>
-                  <CButton @click="showing_sidebar = !showing_sidebar" variant="secondary">
-                      <svg v-if="showing_sidebar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                  <CButton @click="panelStore.showing_sidebar = !panelStore.showing_sidebar" variant="secondary">
+                      <svg v-if="panelStore.showing_sidebar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                         <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
                       </svg>
 
@@ -76,7 +58,7 @@ const addPage = () => {
                 </div>
                 <div id="panel-dashboard-header"></div>
             </header>
-            <template v-for="page in pages">
+            <template v-for="page in panelStore.pages">
                   <TabPanel class="focus:outline-0">
                      <PanelArea :page="page" />
                   </TabPanel>
