@@ -196,7 +196,12 @@ const hasPreviousResult = computed(() => {
 
             <div class="flex space-x-2">
                 <CButton @click="prev" v-if="activeComponent.id > 1" variant="secondary">&larr; Back</CButton>
-                <CButton @click="next" variant="success">Next &rarr;</CButton>
+                <CButton @click="next" variant="success">
+                    <span v-if="activeComponent.outputKey">
+                        Next &rarr;
+                    </span>
+                    <span v-else>Finish</span>
+                </CButton>
             </div>
         </div>
     </template>
