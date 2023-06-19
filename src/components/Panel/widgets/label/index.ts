@@ -49,6 +49,6 @@ export default {
      id: 'label',
     label: 'Label',
     image: '/images/number.png',
-    categories: ['label','all'],
+    categories: ['Label', 'all'],
     itemClass: Label
 }

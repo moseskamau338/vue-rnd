@@ -72,15 +72,20 @@ export const usePanelStore = defineStore('panelsStore', {
        showing_sidebar:false,
        showAddPageInput:false,
 
+       newPanel: {
+           name:'',
+           description:'',
+           widget:{}
+        },
+
         panels: {
            bar_chart: bar_chart,
            label: label
         },
-        activePanels: [],
    }),
     actions:{
        //manage page:
-        addPage: () => {
+        addPage() {
              if(this.newPageName.length <= 0) return;
 
              this.pages.push(
@@ -88,7 +93,8 @@ export const usePanelStore = defineStore('panelsStore', {
                      id:this.newPageName.split(' ').join('_').toLowerCase(),
                      type:'menu',
                      name: this.newPageName,
-                     disabled: false
+                     disabled: false,
+                     widgets:[]
                  },
              )
             this.newPageName = ''
@@ -96,7 +102,7 @@ export const usePanelStore = defineStore('panelsStore', {
         },
        initGridStack(GridStack) {
           this.grid = GridStack.init({
-            column: 6,
+            column: 8,
             cellHeight: 100,
             margin: 8,
             disableResize: !this.is_editing,
@@ -116,18 +122,20 @@ export const usePanelStore = defineStore('panelsStore', {
         },
 
         async addWidget() {
+            if (this.newPanel.name.length <= 0 || Object.keys(this.newPanel.widget).length <= 0) return;
+
+
           const widgetCount = this.activePage.widgets.length + 1;
           const widget = {
-            id: widgetCount,
-            title: `Widget ${widgetCount}`,
+            id: this.newPanel.name+'-'+widgetCount,
+            title: this.newPanel.name,
             grid: {
               w: 2, h: 1,
             },
-            widget: []
+             ...this.newPanel
           };
           this.activePage.widgets.push(widget);
           await nextTick();
-          console.log('Adding widget...', widget)
           this.makeWidget(widget);
         },
 
@@ -143,6 +151,7 @@ export const usePanelStore = defineStore('panelsStore', {
         },
 
         toggleEdit() {
+            console.log('Saving: ', this.grid.save())
           if (this.is_editing) {
             this.grid.disable();
           } else {
@@ -150,6 +159,19 @@ export const usePanelStore = defineStore('panelsStore', {
           }
           this.is_editing = !this.is_editing;
         },
+
+        // create panel
+        async createPanel(){
+            await this.addWidget()
+        },
+        resetCreatePanelWizard(){
+            this.show_panel_wizard = false
+            this.newPanel = {
+               name:'',
+               description:'',
+               widget:{}
+            }
+        }
 
     }
 })

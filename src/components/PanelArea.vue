@@ -94,9 +94,6 @@ onMounted(() => {
    </teleport>
   <div :class="{'graph-paper border dark:border-slate-700' : panelStore.is_editing}"
        class="min-h-[700px] w-full mt-8 transition-all duration-300 relative">
-        <div class="py-2 px-2.5 flex justify-end space-x-2">
-          <CButton variant="secondary" v-if="panelStore.is_editing" @click="panelStore.addWidget">Add Widget</CButton>
-        </div>
         <div class="grid-stack">
             <template v-if="panelStore.activePage.widgets.length > 0">
                 <GridStackWidget

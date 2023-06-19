@@ -2,6 +2,7 @@
 import Modal from "@/components/elements/Modal.vue";
 import SvgIcons from "@/components/elements/SvgIcons.vue";
 import CButton from "@/components/elements/CButton.vue";
+import {usePanelStore} from "@/stores/panels.js";
 import {computed, ref} from "vue";
 import helper_functions from "@/library/helper_functions.js";
 import {useWizard} from "@/library/wizard.js";
@@ -12,6 +13,8 @@ const {searchFilter} = helper_functions
 defineProps({
     open: {required: true, type: Boolean}
 })
+
+const panelStore = usePanelStore()
 
 const widgetQuery = ref('')
 const selected_category = ref('all')
@@ -30,14 +33,12 @@ const widgets = ref([
     {name: 'Dynamic Label (Big Number, Dynamic Text)', image:'/images/number.png', description:'', categories:['Metrics/KPI', 'all']},
     {name: 'Number Trend Line', image:'/images/trendline.png', description:'', categories:['Metrics/KPI','Correlation', 'Distribution', 'all']},
 ])
-const panel = ref({
-    details:{name:'', description:'', widget:{}},
-    widget:{name:'', visualization:'', options:{}, styles:{}},
-})
 
 const filteredWidgets = computed(() => {
-    let filtered = searchFilter(widgets.value, widgetQuery.value)
-    // filtered = JSON.parse(JSON.stringify(filtered))
+    let filtered = searchFilter(
+        Object.entries(panelStore.panels).map(ent => ent[1]),
+        widgetQuery.value
+    )
     if (selected_category.value.length > 0){
         filtered = filtered.filter((widget) => {
             return widget.categories.includes(selected_category.value)
@@ -48,32 +49,41 @@ const filteredWidgets = computed(() => {
 
 
 // ======== Wizard =========== \\
+const detailsAreValid = computed(() => {
+    let isValid = true
+        Object.keys(panelStore.newPanel).forEach((detail_key) =>{
+            if (typeof panelStore.newPanel[detail_key] === "string"){
+                isValid = isValid && !!panelStore.newPanel[detail_key]
+            }else if(typeof panelStore.newPanel[detail_key] === "object"){
+                isValid = isValid && Object.keys(panelStore.newPanel[detail_key]).length > 0
+            }
+        })
+    return isValid
+})
 const savePanelDetails = () => {
     return new Promise((resolve) => {
         // validation
-        let isValid = true
-        Object.keys(panel.value.details).forEach((detail_key) =>{
-            if (typeof panel.value.details[detail_key] === "string"){
-                console.log('Validating strings: ', panel.value.details[detail_key], 'current validity: ', isValid)
-                isValid = isValid && !!panel.value.details[detail_key]
-            }else if(typeof panel.value.details[detail_key] === "object"){
-                console.log('Validating OBJECT: ', Object.keys(panel.value.details[detail_key]).length > 0, 'current validity: ', isValid)
-                isValid = isValid && Object.keys(panel.value.details[detail_key]).length > 0
-            }
-        })
-        console.log(isValid)
-        if (!isValid) return
+        if (!detailsAreValid) return
 
-        previousTabResult.value[activeComponent.value.outputKey] = panel.value.details
-        console.log('Previous result: ', hasPreviousResult.value)
+        previousTabResult.value[activeComponent.value.outputKey] = panelStore.newPanel
         resolve(!!hasPreviousResult.value)
     })
 }
 let tabs = ref([
       {id:1, outputKey: 'panelDetails',status: 'active',name: 'Panel Details', icon:'fa-file-invoice',action:savePanelDetails},
-      {id:2, outputKey: null,status: 'pending',name:'Widget Configuration', icon:'fa-check', action:null}
+      {id:2, outputKey: null,status: 'pending',name:'Widget Configuration', icon:'fa-check', action: addPanel}
     ])
-const {next,jump,prev,activeComponent,processing, emitter:EventBus, previousTabResult} = new useWizard(tabs)
+let {next,jump,prev,activeComponent,processing, emitter:EventBus, previousTabResult} = new useWizard(tabs)
+
+function addPanel() {
+    return new Promise((resolve, reject) => {
+        panelStore.createPanel()
+        panelStore.resetCreatePanelWizard()
+        activeComponent = tabs.value[0]
+        resolve(true)
+    })
+}
+
 
 const hasPreviousResult = computed(() => {
   return (Object.keys(previousTabResult.value).length > 0) &&
@@ -88,7 +98,7 @@ const hasPreviousResult = computed(() => {
     <template #title>
         <div class="flex items-center space-x-2">
             <SvgIcons class="h-5" name="workshop" />
-            <span class="font-medium">{{ panel.details.name || 'Panel Workshop' }}</span>
+            <span class="font-medium">{{ panelStore.newPanel.name || 'Panel Workshop' }}</span>
         </div>
     </template>
     <template #body>
@@ -111,13 +121,13 @@ const hasPreviousResult = computed(() => {
                                     <div>
                                       <label for="name" class="block text-sm font-medium dark:text-slate-300">Panel Name</label>
                                       <div class="mt-1">
-                                        <input v-model="panel.details.name" type="text" name="name" id="name" class="dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100 focus:ring-green-500 focus:border-green-500 block w-[300px] sm:text-sm border-gray-300 rounded" placeholder="Panel title">
+                                        <input v-model="panelStore.newPanel.name" type="text" name="name" id="name" class="dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100 focus:ring-green-500 focus:border-green-500 block w-[300px] sm:text-sm border-gray-300 rounded" placeholder="Panel title">
                                       </div>
                                     </div>
                                     <div>
                                       <label for="description" class="block text-sm font-medium text-gray-700 dark:text-slate-300">Description</label>
                                       <div class="mt-1">
-                                        <input v-model="panel.details.description" type="text" name="description" id="description" class="dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100 focus:ring-green-500 focus:border-green-500 block w-[300px] sm:text-sm border-gray-300 rounded placeholder:text-gray-400 placeholder:text-xs" placeholder="What is the panel for?">
+                                        <input v-model="panelStore.newPanel.description" type="text" name="description" id="description" class="dark:bg-brand-night-box dark:border-slate-500 dark:text-slate-100 focus:ring-green-500 focus:border-green-500 block w-[300px] sm:text-sm border-gray-300 rounded placeholder:text-gray-400 placeholder:text-xs" placeholder="What is the panel for?">
                                       </div>
                                     </div>
                                 </div>
@@ -157,13 +167,13 @@ const hasPreviousResult = computed(() => {
                                                 <div class="col-span-1">
                                                     <div
                                                         :class="[
-                                                            panel.details.widget === widget ? 'border-2 border-green-500' : 'border border-slate-200 dark:border-slate-600'
+                                                            panelStore.newPanel.widget === widget ? 'border-2 border-green-500' : 'border border-slate-200 dark:border-slate-600'
                                                         ]"
-                                                        @click="panel.details.widget = widget" class="p-2 rounded hover:shadow transition-all cursor-pointer" :title="widget.name">
-                                                        <img :src="widget.image" :alt="widget.name">
+                                                        @click="panelStore.newPanel.widget = widget" class="p-2 rounded hover:shadow transition-all cursor-pointer" :title="widget.label">
+                                                        <img :src="widget.image" :alt="widget.label">
                                                     </div>
                                                     <div class="whitespace-nowrap truncate">
-                                                        <small class="text-slate-400">{{widget.name}}</small>
+                                                        <small class="text-slate-400">{{widget.label}}</small>
                                                     </div>
                                                 </div>
                                             </template>
@@ -196,7 +206,7 @@ const hasPreviousResult = computed(() => {
 
             <div class="flex space-x-2">
                 <CButton @click="prev" v-if="activeComponent.id > 1" variant="secondary">&larr; Back</CButton>
-                <CButton @click="next" variant="success">
+                <CButton :disabled="!detailsAreValid" @click="next" variant="success">
                     <span v-if="activeComponent.outputKey">
                         Next &rarr;
                     </span>

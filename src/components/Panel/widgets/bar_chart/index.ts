@@ -74,7 +74,7 @@ class BarChart {
     id: string = 'bar_chart'
     label: string = 'Bar Chart'
     image:string = '/images/bar.png'
-    categories:string[] = ['Bar chart', 'bar', 'all']
+    categories:string[] = ['Correlation', 'Distribution', 'all']
     component: object = Component
     requirements: visualizer_requirements
 

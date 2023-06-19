@@ -103,12 +103,10 @@ export default {
 
         //always setup class
         let panel_instance = ref(new selectedItem.value.itemClass())
+        panelStore.newPanel['instance'] = panel_instance.value
 
         watch(selectedItem, () => {
             panel_instance.value = new selectedItem.value.itemClass()
-        })
-        onMounted(() => {
-          window.current_instance = panel_instance.value
         })
 
         return {options, selectedItem, panel_instance}
