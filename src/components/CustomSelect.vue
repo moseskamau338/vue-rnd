@@ -3,7 +3,7 @@
     <Listbox :model-value="modelValue" v-model="selected" @update:modelValue="pass" :multiple="multiple">
       <div class="relative mt-1">
         <ListboxButton
-          class="relative w-full cursor-default rounded bg-slate-100 dark:bg-brand-night border dark:border-slate-600 py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-green-600 sm:text-sm"
+          class="relative w-full cursor-default rounded bg-slate-100 dark:bg-brand-night border dark:border-slate-600 dark:text-slate-200 py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-green-600 sm:text-sm"
         >
           <span v-if="!valueExists" class="block truncate text-slate-400">{{ placeholder }}</span>
           <div v-else class="block truncate">
