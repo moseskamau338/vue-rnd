@@ -6,7 +6,6 @@ import CButton from "@/components/elements/CButton.vue";
 
 const panelStore = usePanelStore()
 
-panelStore.activePage = panelStore.pages[1]
 
 const vFocus = {
   mounted: (el) => el.focus()
@@ -16,14 +15,14 @@ const vFocus = {
 
 <template>
 <section class="mx-20 py-4 h-screen transition-all duration-300">
-    <TabGroup as="section" class="grid gap-10 grid-cols-1 lg:grid-cols-12 mt-8" vertical>
+    <TabGroup :selectedIndex="panelStore.activePageIndex" @change="panelStore.switchTab" as="section" class="grid gap-10 grid-cols-1 lg:grid-cols-12 mt-8" vertical>
         <TabList as="div" :class="[
             panelStore.showing_sidebar ? 'col-span-2 flex flex-col' : 'hidden'
         ]" class="col-span-2 text-sm space-y-2 focus:outline-0 transition-all duration-300">
+          <span class="font-bold text-slate-400 pl-2 pb-2">Pages</span>
           <template v-for="item in panelStore.pages">
-            <span v-if="item.type === 'header'" class="font-bold text-slate-400 pl-2 pb-2">{{ item.name }}</span>
-            <Tab :disabled="item.disabled" v-slot="{ selected }" v-else-if="item.type === 'menu'" class="focus:outline-0 w-full">
-              <button @click="panelStore.activePage = item" :class="[
+            <Tab :disabled="item.disabled" v-slot="{ selected }" class="focus:outline-0 w-full">
+              <button :class="[
                   selected ? 'bg-white dark:bg-brand-night-box shadow' : '',
                   item.disabled ? 'opacity-70 pointer-events-none' : ''
                 ]"

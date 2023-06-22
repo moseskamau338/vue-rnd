@@ -107,6 +107,7 @@ export default {
 
         watch(selectedItem, () => {
             panel_instance.value = new selectedItem.value.itemClass()
+            panelStore.newPanel['instance'] = panel_instance.value
         })
 
         return {options, selectedItem, panel_instance}

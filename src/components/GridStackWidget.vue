@@ -16,7 +16,7 @@
                     <span>&bull;&bull;&bull;</span>
                     <span>&bull;&bull;&bull;</span>
                 </span>
-                <h2 class="font-medium text-sm">A panel title here</h2>
+                <h2 class="font-medium text-sm">{{ makeTitle(data.title) }}</h2>
               </div>
               <div class="flex space-x-2 items-center">
                 <button>
@@ -39,8 +39,9 @@
                   </Menu>
             </div>
         </header>
-          <div class="h-[75%] overflow-y-scroll scrollbar-thin">
-              {{ data.title }}
+          <div class="h-full overflow-y-scroll scrollbar-thin">
+              <Component v-if="data.instance" :is="data.instance.component" :key="data.id" v-bind:instance="data.instance" />
+              <div v-else></div>
           </div>
       </div>
   </div>
@@ -49,6 +50,7 @@
 
 import ToolTip from "@/components/elements/ToolTip.vue";
 import Menu from "@/components/elements/Menu.vue";
+import helper_functions from "@/library/helper_functions.js";
 
 const props = defineProps({
   data: {
@@ -59,6 +61,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["delete"]);
+const {makeTitle} = helper_functions
 function deleteWidget() {
   emit("delete", props.data);
 }

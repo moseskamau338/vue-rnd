@@ -86,7 +86,7 @@ onMounted(() => {
             </Menu>
 
             <div v-if="panelStore.is_editing" class="flex space-x-2 transition-all duration-500">
-                <CButton @click="panelStore.toggleEdit" variant="success">Save</CButton>
+                <CButton @click="panelStore.toggleEdit($event, true)" variant="success">Save</CButton>
                 <CButton @click="panelStore.toggleEdit" variant="secondary">Cancel</CButton>
             </div>
        </div>

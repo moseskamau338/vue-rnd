@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import bar_chart from "@/components/Panel/widgets/bar_chart";
 import label from "@/components/Panel/widgets/label";
 import {nextTick} from "vue";
+import {find} from "lodash/collection";
 
 export const usePanelStore = defineStore('panelsStore', {
    state: () => ({
@@ -9,56 +10,14 @@ export const usePanelStore = defineStore('panelsStore', {
         show_panel_wizard: false,
         grid: null,
        //page management
-       activePage: null,
+       activePageIndex: 0,
        pages:[
-          {type:'header', name:'Pages'},
           {
               id: 'acc_metrics',
               type:'menu',
               name:'Accounts Metrics',
               disabled: false,
-              widgets: [
-                    {
-                        id: 1,
-                        title: "Widget - Accounts Metrics",
-                        grid: {
-                          x: 0, y: 0,
-                          w: 2, h: 2,
-                        },
-                    },
-                    {
-                        id: 2,
-                        title: "Widget - Accounts Metrics 2",
-                        grid: {
-                          x: 2, y: 0,
-                          w: 2, h: 1,
-                        },
-                    },
-                    {
-                        id: 3,
-                        title: "Widget - Accounts Metrics 3",
-                        grid: {
-                          x: 0, y: 2,
-                          w: 2, h: 1,
-                        },
-                    },
-                    {
-                        id: 4,
-                        title: "Widget - Accounts Metrics 4",
-                        grid: {
-                          x: 2, y: 2,
-                          w: 3, h: 2,
-                        },
-                    },
-                    {
-                        id: 5,
-                        title: "Widget - Accounts Metrics 5",
-                        grid: {
-                          x: 3, y: 2,
-                          w: 2, h: 2,
-                        },
-                    },
-                ],
+              widgets: [],
           },
           {
               id:'transaction_overview',
@@ -69,7 +28,7 @@ export const usePanelStore = defineStore('panelsStore', {
           },
         ],
        newPageName:'',
-       showing_sidebar:false,
+       showing_sidebar:true,
        showAddPageInput:false,
 
        newPanel: {
@@ -83,6 +42,11 @@ export const usePanelStore = defineStore('panelsStore', {
            label: label
         },
    }),
+    getters:{
+       activePage(state){
+           return state.pages[state.activePageIndex]
+       }
+    },
     actions:{
        //manage page:
         addPage() {
@@ -118,6 +82,7 @@ export const usePanelStore = defineStore('panelsStore', {
         },
         makeWidget(item) {
           const elSelector = `#${item.id}`;
+          window.grid = this.grid
           return this.grid.makeWidget(elSelector);
         },
 
@@ -130,7 +95,7 @@ export const usePanelStore = defineStore('panelsStore', {
             id: this.newPanel.name+'-'+widgetCount,
             title: this.newPanel.name,
             grid: {
-              w: 2, h: 1,
+              w: 3, h: 3,
             },
              ...this.newPanel
           };
@@ -150,10 +115,15 @@ export const usePanelStore = defineStore('panelsStore', {
           this.activePage.widgets.splice(index, 1);
         },
 
-        toggleEdit() {
+        toggleEdit(e, save = false) {
             console.log('Saving: ', this.grid.save())
           if (this.is_editing) {
-            this.grid.disable();
+            if (save){
+                this.updateCurrentPageGrid()
+                    .then(() => {
+                        this.grid.disable();
+                    })
+            }
           } else {
             this.grid.enable();
           }
@@ -171,6 +141,30 @@ export const usePanelStore = defineStore('panelsStore', {
                description:'',
                widget:{}
             }
+        },
+
+        //navigation
+        async updateCurrentPageGrid(){
+            console.log('Saving grid')
+            return new Promise((resolve, reject) => {
+                const gridItems = this.grid.getGridItems();
+                gridItems.forEach((item) => {
+                    item = item.gridstackNode
+                    const updateWidget = find(this.activePage.widgets, {id: item.id})
+                    if (updateWidget){
+                        updateWidget.grid = {
+                           x: item.x,     y: item.y,
+                           w: item.w, h: item.h,
+                         }
+                    }
+                })
+                resolve()
+            })
+        },
+        async switchTab(index){
+            //update grid
+            await this.updateCurrentPageGrid()
+            this.activePageIndex = index
         }
 
     }
